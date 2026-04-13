@@ -47,6 +47,29 @@ export function estimatedXautPerMintFromFeeShare(feeSharePercent: string): numbe
   return Math.floor(SHOVEL_TIER_XAUT_MODEL_MULTIPLIER * p);
 }
 
+/** On-chain ShovelNFT token ID bands (iron / silver / gold). */
+export function shovelTokenIdToTier(tokenId: number): ShovelTier | null {
+  if (!Number.isFinite(tokenId)) return null;
+  const id = Math.trunc(tokenId);
+  if (id < 1 || id > 799) return null;
+  if (id <= 666) return 0;
+  if (id <= 777) return 1;
+  return 2;
+}
+
+/** Sum of per-shovel Bxaut model weights for the given on-chain token IDs. */
+export function sumEstimatedBxautForOwnedShovelIds(
+  tokenIds: readonly number[],
+): number {
+  let sum = 0;
+  for (const raw of tokenIds) {
+    const tier = shovelTokenIdToTier(raw);
+    if (tier === null) continue;
+    sum += estimatedXautPerMintFromFeeShare(SHOVEL_TIERS[tier].feeSharePercent);
+  }
+  return sum;
+}
+
 export const BSC_NETWORK_PARAMS = {
   chainId: BSC_CHAIN_ID_HEX,
   chainName: "BNB Smart Chain Mainnet",

@@ -130,6 +130,7 @@ export const translations = {
     tokS5b:
       "NFTs are on-chain yield nodes; each Shovel is the pass for tax dividends and XAUT upside.",
     assetsLabel: "Assets",
+    pendingBxautLine: "Pending Bxaut tokens: {count}",
     myNfts: "My NFTs",
     myNftsClose: "Close",
     myNftsLoading: "Loading your shovels…",
@@ -256,6 +257,7 @@ export const translations = {
     tokS5b:
       "NFT 是「链上收益捕获节点」：每一枚铲子都是交易税费分红与黄金流动性加持的通行证。",
     assetsLabel: "资产",
+    pendingBxautLine: "待发放 Bxaut 代币 {count} 枚",
     myNfts: "我的 NFT",
     myNftsClose: "关闭",
     myNftsLoading: "正在加载你的铲子…",

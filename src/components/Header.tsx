@@ -1,3 +1,4 @@
+import { usePendingBxautFromShovels } from "../hooks/usePendingBxautFromShovels";
 import type { WalletApi } from "../hooks/useWallet";
 import { useI18n } from "../i18n/I18nContext";
 import { publicAsset } from "../config/publicPath";
@@ -5,6 +6,7 @@ import { MyNftsPopover } from "./MyNftsPopover";
 
 export function Header({ wallet }: { wallet: WalletApi }) {
   const { locale, setLocale, t } = useI18n();
+  const pendingBxaut = usePendingBxautFromShovels(wallet);
 
   return (
     <header className="app-header">
@@ -40,6 +42,26 @@ export function Header({ wallet }: { wallet: WalletApi }) {
                 {Number(wallet.usdtBalance).toLocaleString(undefined, {
                   maximumFractionDigits: 4,
                 })}
+              </span>
+            )}
+            {pendingBxaut.show && (
+              <span className="wallet-pending-bxaut" aria-live="polite">
+                {(() => {
+                  const parts = t("pendingBxautLine").split("{count}");
+                  const countStr =
+                    pendingBxaut.displayTotal !== null
+                      ? pendingBxaut.displayTotal.toLocaleString(
+                          locale === "zh" ? "zh-CN" : "en-US",
+                        )
+                      : "…";
+                  return (
+                    <>
+                      {parts[0]}
+                      <span className="wallet-pending-bxaut__num">{countStr}</span>
+                      {parts.slice(1).join("{count}")}
+                    </>
+                  );
+                })()}
               </span>
             )}
             <MyNftsPopover wallet={wallet} />

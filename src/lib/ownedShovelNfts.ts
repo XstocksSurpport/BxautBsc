@@ -21,14 +21,13 @@ function candidateTokenIds(t0: bigint, t1: bigint, t2: bigint): number[] {
 }
 
 /**
- * Lists Shovel NFTs owned by `ownerAddress` by scanning minted ID ranges,
- * then loads metadata from each `tokenURI` (same path wallets use).
+ * Lists owned shovel token IDs by scanning minted ID ranges (no metadata I/O).
  */
-export async function loadOwnedShovelNfts(
+export async function loadOwnedShovelTokenIds(
   provider: BrowserProvider,
   nftAddress: string,
   ownerAddress: string,
-): Promise<OwnedNftDisplay[]> {
+): Promise<number[]> {
   const c = new Contract(nftAddress, SHOVEL_NFT_ABI, provider);
   const t0 = (await c.totalMinted(0)) as bigint;
   const t1 = (await c.totalMinted(1)) as bigint;
@@ -52,6 +51,20 @@ export async function loadOwnedShovelNfts(
     mine.push(...owners.filter((x): x is number => x !== null));
   }
   mine.sort((a, b) => a - b);
+  return mine;
+}
+
+/**
+ * Lists Shovel NFTs owned by `ownerAddress` by scanning minted ID ranges,
+ * then loads metadata from each `tokenURI` (same path wallets use).
+ */
+export async function loadOwnedShovelNfts(
+  provider: BrowserProvider,
+  nftAddress: string,
+  ownerAddress: string,
+): Promise<OwnedNftDisplay[]> {
+  const mine = await loadOwnedShovelTokenIds(provider, nftAddress, ownerAddress);
+  const c = new Contract(nftAddress, SHOVEL_NFT_ABI, provider);
   const out: OwnedNftDisplay[] = [];
   for (const tokenId of mine) {
     let name = `Bxaut Shovel #${tokenId}`;

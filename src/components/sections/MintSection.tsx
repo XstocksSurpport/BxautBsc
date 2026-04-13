@@ -10,6 +10,7 @@ import {
 } from "../../config/constants";
 import { displayShovelNftAddress } from "../../config/publicAddresses";
 import { publicAsset } from "../../config/publicPath";
+import { requestShovelHoldingsRefresh } from "../../lib/shovelHoldingsRefresh";
 import type { WalletApi } from "../../hooks/useWallet";
 import { useI18n } from "../../i18n/I18nContext";
 
@@ -108,6 +109,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       await tx.wait();
       setStatus(t("mintSuccess"));
       await wallet.refreshUsdt();
+      requestShovelHoldingsRefresh();
       try {
         await refreshOnchain();
       } catch {
@@ -115,6 +117,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       }
       window.setTimeout(() => {
         void refreshOnchain();
+        requestShovelHoldingsRefresh();
       }, 1200);
     } catch (e) {
       setStatus(e instanceof Error ? e.message : String(e));
