@@ -11,6 +11,14 @@ npm run dev
 
 Optional: set addresses in `.env` (see `contracts/.env.example`). Hardhat reads both the repo root `.env` and `contracts/.env`.
 
+## Vercel
+
+1. Push this repo to GitHub (see below).
+2. Open [Vercel → New Project](https://vercel.com/new) and **Import** your GitHub repository (e.g. under your team [New Project](https://vercel.com/new?teamSlug=zoacahns-projects)).
+3. Leave defaults: **Framework Preset** Vite, **Build Command** `npm run vercel-build`, **Output** `dist` (from `vercel.json`).
+4. Optional in Vercel → Project → **Environment Variables**: set **`NFT_SITE_BASE`** to your canonical public URL (e.g. `https://your-domain.com` or the production deployment URL). If unset, the build uses `VERCEL_PROJECT_PRODUCTION_URL` / `VERCEL_URL` so `public/nft-metadata/*.json` gets correct HTTPS image links.
+5. After deploy, set the on-chain NFT `baseURI` to `https://<your-deployment>/nft-metadata/` (owner: `npm run shovel:set-baseuri`).
+
 ## GitHub Pages (site + NFT metadata for wallets)
 
 1. Create a repository on GitHub and push this project (`main` or `master`).

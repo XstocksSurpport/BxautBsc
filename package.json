@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
+    "vercel-build": "node scripts/vercel-build.cjs",
     "preview": "vite preview",
     "compile:contracts": "hardhat compile",
     "deploy:bxaut:testnet": "hardhat run scripts/deploy-bxaut.cjs --network bscTestnet",

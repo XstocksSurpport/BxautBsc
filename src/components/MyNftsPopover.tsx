@@ -110,7 +110,6 @@ export function MyNftsPopover({ wallet }: { wallet: WalletApi }) {
               ))}
             </ul>
           )}
-          <p className="my-nfts-footnote">{t("myNftsFootnote")}</p>
         </div>
       )}
     </div>

@@ -136,8 +136,6 @@ export const translations = {
     myNftsClose: "Close",
     myNftsLoading: "Loading your shovels…",
     myNftsEmpty: "No Shovel NFTs in this wallet yet.",
-    myNftsFootnote:
-      "Images follow on-chain tokenURI metadata. If your phone wallet still shows blanks, the contract owner must set baseURI to this site’s public HTTPS URL (see README).",
     ...faqEn,
   },
   zh: {
@@ -266,8 +264,6 @@ export const translations = {
     myNftsClose: "关闭",
     myNftsLoading: "正在加载你的铲子…",
     myNftsEmpty: "该钱包暂无铲子 NFT。",
-    myNftsFootnote:
-      "图片读取链上 tokenURI 对应的元数据。若手机钱包仍不显示封面，需合约 owner 将 baseURI 设为本站公网 HTTPS（见 README）。",
     ...faqZh,
   },
 } as const;

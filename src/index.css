@@ -49,6 +49,7 @@ textarea {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   color: var(--text);
   background-color: #02040a;
   background-image:
@@ -426,13 +427,6 @@ body {
   margin: 0;
   font-size: 11px;
   color: var(--gold2);
-}
-
-.my-nfts-footnote {
-  margin: 10px 0 0;
-  font-size: 11px;
-  line-height: 1.45;
-  color: var(--muted);
 }
 
 .usdt-pill {
@@ -1852,6 +1846,9 @@ body {
     grid-template-columns: 1fr;
     grid-template-rows: auto auto auto;
     justify-items: stretch;
+    padding: max(8px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right))
+      10px max(10px, env(safe-area-inset-left));
+    gap: 10px;
   }
 
   .lang-toggle {
@@ -1861,11 +1858,109 @@ body {
   .brand-center {
     justify-self: center;
     transform: rotate(-0.4deg);
+    max-width: 100%;
+  }
+
+  .brand-title {
+    max-width: 100%;
   }
 
   .wallet-cluster {
     justify-self: stretch;
-    justify-content: space-between;
+    justify-content: stretch;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .wallet-info {
+    align-items: stretch;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .my-nfts-wrap {
+    justify-content: stretch;
+  }
+
+  .btn-my-nfts {
+    width: 100%;
+    min-height: 44px;
+    font-size: 10px;
+  }
+
+  .main-flow {
+    padding: 14px max(10px, env(safe-area-inset-left)) 32px max(10px, env(safe-area-inset-right));
+    gap: 16px;
+  }
+
+  .main-flow > .section {
+    transform: none;
+  }
+
+  .main-flow > .section:hover {
+    transform: none;
+  }
+
+  .section {
+    padding: 14px max(12px, env(safe-area-inset-left)) 14px max(12px, env(safe-area-inset-right));
+  }
+
+  .tier-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .tier-card .tier-mint-actions .btn,
+  .tier-card .btn {
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+
+  .top-nav {
+    padding-left: max(8px, env(safe-area-inset-left));
+    padding-right: max(8px, env(safe-area-inset-right));
+  }
+
+  .bottom-dock {
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .banner-error {
+    margin-left: max(10px, env(safe-area-inset-left));
+    margin-right: max(10px, env(safe-area-inset-right));
+  }
+
+  .tokenomics-table {
+    font-size: 12px;
+  }
+
+  .tokenomics-table th,
+  .tokenomics-table td {
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .my-nfts-popover {
+    position: fixed;
+    left: max(8px, env(safe-area-inset-left));
+    right: max(8px, env(safe-area-inset-right));
+    top: auto;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    width: auto;
+    max-height: min(75dvh, 560px);
+    z-index: 300;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .my-nfts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
