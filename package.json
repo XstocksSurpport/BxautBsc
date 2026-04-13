@@ -1,0 +1,40 @@
+{
+  "name": "bxaut-bsc-mint",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "compile:contracts": "hardhat compile",
+    "deploy:bxaut:testnet": "hardhat run scripts/deploy-bxaut.cjs --network bscTestnet",
+    "deploy:bxaut": "hardhat run scripts/deploy-bxaut.cjs --network bsc",
+    "deploy:dividend": "hardhat run scripts/deploy-dividend-distributor.cjs --network bsc",
+    "deploy:dividend:testnet": "hardhat run scripts/deploy-dividend-distributor.cjs --network bscTestnet",
+    "gen:nft-metadata": "node scripts/generate-shovel-metadata.cjs",
+    "deploy:shovel:testnet": "hardhat run scripts/deploy-shovel-nft.cjs --network bscTestnet",
+    "deploy:shovel": "hardhat run scripts/deploy-shovel-nft.cjs --network bsc",
+    "verify:shovel": "hardhat run scripts/verify-shovel-nft.cjs --network bsc",
+    "export:bscscan-shovel": "node scripts/export-shovel-bscscan-json.cjs",
+    "shovel:set-baseuri": "hardhat run scripts/set-shovel-baseuri.cjs --network bsc",
+    "shovel:set-baseuri:testnet": "hardhat run scripts/set-shovel-baseuri.cjs --network bscTestnet"
+  },
+  "dependencies": {
+    "ethers": "^6.13.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "5.0.2",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.17",
+    "terser": "^5.37.0",
+    "typescript": "~5.6.3",
+    "vite": "^6.0.3"
+  }
+}

@@ -1,0 +1,16 @@
+node_modules
+dist
+.vite
+*.tsbuildinfo
+.env
+.env.local
+contracts/.env
+contracts/cache
+contracts/artifacts
+contracts/bscscan-ShovelNFT-standard-input.json
+bscscan-ShovelNFT-standard-input.json
+coverage
+coverage.json
+
+# NFT metadata is generated (npm run gen:nft-metadata); URLs embed NFT_SITE_BASE.
+public/nft-metadata/*.json
