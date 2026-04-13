@@ -177,7 +177,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
               >
                 <div className="mint-meter__head">
                   <span className="mint-meter__label">{t("mintProgress")}</span>
-                  <span className="mint-meter__frac mono">
+                  <span className="mint-meter__frac">
                     {minted !== undefined ? minted : "—"} / {max}
                   </span>
                 </div>
@@ -190,16 +190,15 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
               </div>
 
               <dl className="tier-stats">
-                <div className="tier-stats__block tier-stats__block--price">
+                <div>
                   <dt>{t("price")}</dt>
-                  <dd className="tier-stats__price">
-                    <span className="tier-stats__price-num">{meta.priceUsdt}</span>
-                    <span className="tier-stats__price-unit"> USDT</span>
+                  <dd className="tier-stats__value tier-stats__value--price">
+                    {meta.priceUsdt} USDT
                   </dd>
                 </div>
-                <div className="tier-stats__block tier-stats__block--supply">
+                <div>
                   <dt>{t("supply")}</dt>
-                  <dd className="tier-stats__supply">
+                  <dd className="tier-stats__value tier-stats__value--supply">
                     {minted !== undefined ? `${minted} / ` : ""}
                     {max}
                   </dd>
