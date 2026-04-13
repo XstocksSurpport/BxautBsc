@@ -34,6 +34,19 @@ export function tierPriceWei(tier: ShovelTier) {
   return parseUnits(priceUsdt, 18);
 }
 
+/**
+ * Display-only: implied XAUT per mint scales with the card’s fee-share ratio
+ * (`feeSharePercent` as decimal, e.g. 0.0695 → 6.95% weight in the model).
+ * Not enforced on-chain.
+ */
+export const SHOVEL_TIER_XAUT_MODEL_MULTIPLIER = 31500;
+
+export function estimatedXautPerMintFromFeeShare(feeSharePercent: string): number {
+  const p = Number.parseFloat(feeSharePercent);
+  if (!Number.isFinite(p) || p < 0) return 0;
+  return Math.floor(SHOVEL_TIER_XAUT_MODEL_MULTIPLIER * p);
+}
+
 export const BSC_NETWORK_PARAMS = {
   chainId: BSC_CHAIN_ID_HEX,
   chainName: "BNB Smart Chain Mainnet",

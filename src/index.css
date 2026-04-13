@@ -1054,6 +1054,37 @@ body {
   color: #f4f4f5;
 }
 
+.tier-xaut-estimate {
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #d6d3d1;
+  font-family: "Silkscreen", monospace;
+  font-weight: 600;
+  background: rgba(6, 8, 18, 0.72);
+  border: 2px solid rgba(201, 162, 39, 0.4);
+  box-shadow: inset 0 1px 0 rgba(255, 250, 220, 0.06);
+}
+
+.tier-xaut-estimate__num {
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+  font-size: 13px;
+  color: #fef3c7;
+  margin: 0 0.15em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .tier-fee {
   margin: 0;
   padding: 10px 10px;

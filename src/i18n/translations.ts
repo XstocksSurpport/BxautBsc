@@ -29,6 +29,8 @@ export const translations = {
     price: "Price",
     supply: "Supply",
     feeShareLabel: "Fee income share (per NFT)",
+    tierXautEstimate:
+      "Single mint ≈ {count} XAUT (model estimate; not on-chain).",
     rarityNote:
       "Shiny gold is the rarest; 999 fine silver sits in the middle; rusty iron has the largest supply!",
     mintCta: "Mint",
@@ -159,6 +161,7 @@ export const translations = {
     price: "价格",
     supply: "总量",
     feeShareLabel: "单枚 NFT 手续费收入占比",
+    tierXautEstimate: "铸造单个 NFT 获得 XAUT 约 {count} 枚。",
     rarityNote:
       "闪闪发亮的金铲子最稀缺，999纯银铲子居中，生锈的铁铲发行量最大！",
     mintCta: "铸造",

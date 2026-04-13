@@ -4,6 +4,7 @@ import { SHOVEL_NFT_ABI } from "../../config/abis";
 import {
   BSC_CHAIN_ID,
   SHOVEL_TIERS,
+  estimatedXautPerMintFromFeeShare,
   tierPriceWei,
   type ShovelTier,
 } from "../../config/constants";
@@ -34,7 +35,7 @@ function mintPct(minted: number | undefined, max: number) {
 }
 
 export function MintSection({ wallet }: { wallet: WalletApi }) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [status, setStatus] = useState<string | null>(null);
   const [onchain, setOnchain] = useState<
     Partial<Record<ShovelTier, { minted?: bigint; max?: bigint }>>
@@ -204,6 +205,20 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
                   </dd>
                 </div>
               </dl>
+              <p className="tier-xaut-estimate" role="note">
+                {(() => {
+                  const n = estimatedXautPerMintFromFeeShare(meta.feeSharePercent);
+                  const fmt = n.toLocaleString(locale === "zh" ? "zh-CN" : "en-US");
+                  const parts = t("tierXautEstimate").split("{count}");
+                  return (
+                    <>
+                      {parts[0]}
+                      <span className="tier-xaut-estimate__num">{fmt}</span>
+                      {parts.slice(1).join("{count}")}
+                    </>
+                  );
+                })()}
+              </p>
               <p className="tier-fee" role="note">
                 <span className="tier-fee-label">{t("feeShareLabel")}</span>
                 <span className="tier-fee-value">
