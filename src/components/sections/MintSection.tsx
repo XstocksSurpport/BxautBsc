@@ -92,9 +92,6 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
         <h2 className="section-title">{t("mintTitle")}</h2>
         <p className="mint-theme">{t("mintTheme")}</p>
         <p className="section-note mint-rarity-note">{t("rarityNote")}</p>
-        <p className="section-note mint-safety-note" role="note">
-          {t("mintWalletSafetyNote")}
-        </p>
       </div>
 
       <div className="meme-rail" aria-hidden>

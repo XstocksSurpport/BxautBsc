@@ -78,6 +78,9 @@ async function main() {
   console.log(
     "Set VITE_SHOVEL_NFT_ADDRESS in root .env and rebuild the frontend.",
   );
+  console.log(
+    "Note: every new deployment gets a new address. You cannot keep an old address while replacing bytecode; use a proxy pattern only if you need upgrades at a fixed address.",
+  );
 }
 
 main().catch((e) => {

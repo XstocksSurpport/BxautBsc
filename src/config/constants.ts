@@ -24,9 +24,9 @@ export const SHOVEL_TIERS: Record<
     feeSharePercent: string;
   }
 > = {
-  0: { priceUsdt: "1", supply: 666, key: "iron", feeSharePercent: "0.0695" },
-  1: { priceUsdt: "11", supply: 111, key: "silver", feeSharePercent: "0.2777" },
-  2: { priceUsdt: "111", supply: 22, key: "gold", feeSharePercent: "1.041" },
+  0: { priceUsdt: "8.88", supply: 666, key: "iron", feeSharePercent: "0.0695" },
+  1: { priceUsdt: "44.44", supply: 111, key: "silver", feeSharePercent: "0.2777" },
+  2: { priceUsdt: "111.11", supply: 22, key: "gold", feeSharePercent: "1.041" },
 };
 
 export function tierPriceWei(tier: ShovelTier) {

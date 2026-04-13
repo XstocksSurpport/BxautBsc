@@ -78,7 +78,6 @@ export function DividendSection({ wallet }: { wallet: WalletApi }) {
         </div>
         <p className="hud-panel__ribbon">{t("revenuePanel")}</p>
         <h2 className="section-title hud-panel__title">{t("dividendTitle")}</h2>
-        <p className="section-lead hud-panel__lead">{t("dividendBody")}</p>
 
         <div className="hud-grid">
           <div className="hud-tile">

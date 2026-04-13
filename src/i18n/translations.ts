@@ -35,15 +35,11 @@ export const translations = {
     approveUsdt: "Approve USDT",
     configureContract:
       "Set VITE_SHOVEL_NFT_ADDRESS in your environment to enable minting.",
-    mintWalletSafetyNote:
-      "MetaMask and similar wallets may show a Blockaid security notice for new contracts. This site only requests USDT approval for the exact tier price (not unlimited). Verify the NFT contract on BscScan; warnings often clear after the contract is verified and gains usage history.",
     connectFirst: "Connect your wallet on BSC to mint.",
     mintSuccess: "Mint submitted. Check your wallet or BscScan.",
     marketTitle: "Shovel Black Market",
     marketBody: "Coming soon",
     dividendTitle: "Claim XAUT gold-linked dividends",
-    dividendBody:
-      "When the dividend distributor contract is configured, claim XAUT gold-linked and related rewards here on BSC.",
     claim: "Claim",
     noDividendContract:
       "Set VITE_DIVIDEND_DISTRIBUTOR_ADDRESS to wire the claim button.",
@@ -168,14 +164,11 @@ export const translations = {
     mintCta: "铸造",
     approveUsdt: "授权 USDT",
     configureContract: "请在环境变量中设置 VITE_SHOVEL_NFT_ADDRESS 以启用铸造。",
-    mintWalletSafetyNote:
-      "MetaMask 等钱包可能对「新合约」弹出 Blockaid 安全提示。本站 USDT 授权仅为当前档位应付金额（非无限额度）。请在 BscScan 核对 NFT 合约；完成源码验证并积累使用后，提示通常会减弱。",
     connectFirst: "请在 BSC 上连接钱包后再铸造。",
     mintSuccess: "交易已提交，请在钱包或 BscScan 查看。",
     marketTitle: "铲子黑市",
     marketBody: "暂未开放",
     dividendTitle: "XAUT黄金分红领取",
-    dividendBody: "配置分红分发合约后，可在此领取 XAUT 黄金分红等相关奖励。",
     claim: "领取",
     noDividendContract: "请设置 VITE_DIVIDEND_DISTRIBUTOR_ADDRESS 以连接领取按钮。",
     communityTitle: "加入社区",

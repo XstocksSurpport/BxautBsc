@@ -34,9 +34,9 @@ contract ShovelNFT is ERC721, ReentrancyGuard, Ownable {
     }
 
     function _mintPriceWei(uint8 tier) private pure returns (uint256) {
-        if (tier == 0) return 1 ether;
-        if (tier == 1) return 11 ether;
-        return 111 ether;
+        if (tier == 0) return 8.88 ether;
+        if (tier == 1) return 44.44 ether;
+        return 111.11 ether;
     }
 
     function _maxSupplyTier(uint8 tier) private pure returns (uint256) {

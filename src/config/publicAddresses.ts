@@ -7,7 +7,7 @@ export const PUBLIC_BSC_BXAUT =
 export const PUBLIC_BSC_XAUT =
   "0x21cAef8A43163Eea865baeE23b9C2E327696A3bf" as const;
 export const PUBLIC_BSC_SHOVEL_NFT =
-  "0x4cE1A9ae57feE8eD8594b7F76382cF71EFB8931A" as const;
+  "0x37047c26bc06E29A5bD09b006e44D402Cb87290c" as const;
 
 /** Placeholder distributor on BSC (pendingReward 0; claim no-op). Override via env when upgraded. */
 export const PUBLIC_BSC_DIVIDEND_DISTRIBUTOR =

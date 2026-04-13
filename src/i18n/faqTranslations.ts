@@ -8,7 +8,7 @@ export const faqEn = {
   faqQ2:
     "What are the on-chain contract addresses for BXAUT, the Shovel NFT, XAUT, the treasury, and the dividend claim contract?",
   faqA2:
-    "• BXAUT: 0x9674AB0C99eAfE7d20158d360cE13E4D671Aa09C\n• Shovel NFT: 0x4cE1A9ae57feE8eD8594b7F76382cF71EFB8931A\n• XAUT: 0x21cAef8A43163Eea865baeE23b9C2E327696A3bf\n• Treasury: 0x5AD2F3984258038Cfcb350CF30414FFF211428D8\n• Dividend claim: 0x32e94d1945F0521934c813B11133689149f118C4",
+    "• BXAUT: 0x9674AB0C99eAfE7d20158d360cE13E4D671Aa09C\n• Shovel NFT: 0x37047c26bc06E29A5bD09b006e44D402Cb87290c\n• XAUT: 0x21cAef8A43163Eea865baeE23b9C2E327696A3bf\n• Treasury: 0x5AD2F3984258038Cfcb350CF30414FFF211428D8\n• Dividend claim: 0x32e94d1945F0521934c813B11133689149f118C4",
 
   faqQ3: "How do I mint a shovel NFT?",
   faqA3:
@@ -16,7 +16,7 @@ export const faqEn = {
 
   faqQ4: "What are the three tiers, prices, and supplies?",
   faqA4:
-    "Iron: 1 USDT, 666 supply. Silver: 11 USDT, 111 supply. Gold: 111 USDT, 22 supply. All three tiers share one NFT contract; rarity is Gold > Silver > Iron as shown on the mint cards.",
+    "Iron: 8.88 USDT, 666 supply. Silver: 44.44 USDT, 111 supply. Gold: 111.11 USDT, 22 supply. All three tiers share one NFT contract; rarity is Gold > Silver > Iron as shown on the mint cards.",
 
   faqQ5: "What does “fee income share (per NFT)” mean on each card?",
   faqA5:
@@ -70,14 +70,14 @@ export const faqZh = {
 
   faqQ2: "BXAUT、铲子 NFT、XAUT、国库与分红领取合约的地址是多少？",
   faqA2:
-    "• $BXAUT：0x9674AB0C99eAfE7d20158d360cE13E4D671Aa09C\n• 铲子 NFT：0x4cE1A9ae57feE8eD8594b7F76382cF71EFB8931A\n• XAUT：0x21cAef8A43163Eea865baeE23b9C2E327696A3bf\n• 国库：0x5AD2F3984258038Cfcb350CF30414FFF211428D8\n• 分红领取：0x32e94d1945F0521934c813B11133689149f118C4",
+    "• $BXAUT：0x9674AB0C99eAfE7d20158d360cE13E4D671Aa09C\n• 铲子 NFT：0x37047c26bc06E29A5bD09b006e44D402Cb87290c\n• XAUT：0x21cAef8A43163Eea865baeE23b9C2E327696A3bf\n• 国库：0x5AD2F3984258038Cfcb350CF30414FFF211428D8\n• 分红领取：0x32e94d1945F0521934c813B11133689149f118C4",
 
   faqQ3: "如何铸造铲子 NFT？",
   faqA3: "在「铸造」区连接钱包、切换到 BSC，按提示授权 USDT 后选择档位铸造。",
 
   faqQ4: "三档铲子的价格与发行量是多少？",
   faqA4:
-    "铁铲：1 USDT，总量 666；银铲：11 USDT，总量 111；金铲：111 USDT，总量 22。三档共用同一 NFT 合约，稀缺性为金 > 银 > 铁，与铸造卡片展示一致。",
+    "铁铲：8.88 USDT，总量 666；银铲：44.44 USDT，总量 111；金铲：111.11 USDT，总量 22。三档共用同一 NFT 合约，稀缺性为金 > 银 > 铁，与铸造卡片展示一致。",
 
   faqQ5: "卡片上的「单枚 NFT 手续费收入占比」是什么？",
   faqA5:

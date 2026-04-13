@@ -5,7 +5,7 @@
  *   (usdt, treasury, initialOwner, baseURI)
  *
  * PowerShell example (replace address + base if yours differ):
- *   $env:SHOVEL_NFT_ADDRESS = "0x4cE1A9ae57feE8eD8594b7F76382cF71EFb8931A"
+ *   $env:SHOVEL_NFT_ADDRESS = "0x37047c26bc06E29A5bD09b006e44D402Cb87290c"
  *   $env:NFT_METADATA_BASE_URI = "http://127.0.0.1:5173/nft-metadata/"
  *   $env:SHOVEL_OWNER = "0x19bb5bD05776082808E8487F8d642ba2d726a7b9"
  *   npx hardhat run scripts/verify-shovel-nft.cjs --network bsc
