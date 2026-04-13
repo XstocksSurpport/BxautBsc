@@ -1,7 +1,12 @@
 import { BrowserProvider, Contract } from "ethers";
 import { useCallback, useEffect, useState } from "react";
 import { SHOVEL_NFT_ABI } from "../../config/abis";
-import { SHOVEL_TIERS, tierPriceWei, type ShovelTier } from "../../config/constants";
+import {
+  BSC_CHAIN_ID,
+  SHOVEL_TIERS,
+  tierPriceWei,
+  type ShovelTier,
+} from "../../config/constants";
 import { displayShovelNftAddress } from "../../config/publicAddresses";
 import { publicAsset } from "../../config/publicPath";
 import type { WalletApi } from "../../hooks/useWallet";
@@ -59,6 +64,28 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     void refreshOnchain();
   }, [refreshOnchain, wallet.chainId, wallet.account]);
 
+  /** Tab back / foreground: some wallets throttle RPC while in background. */
+  useEffect(() => {
+    const onVis = () => {
+      if (document.visibilityState === "visible" && wallet.chainId === BSC_CHAIN_ID) {
+        void refreshOnchain();
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [refreshOnchain, wallet.chainId]);
+
+  /** Poll totals on BSC so progress reflects your mint and others' mints without reload. */
+  useEffect(() => {
+    if (!wallet.hasInjectedProvider || wallet.chainId !== BSC_CHAIN_ID || !addr) {
+      return;
+    }
+    const id = window.setInterval(() => {
+      void refreshOnchain();
+    }, 12_000);
+    return () => window.clearInterval(id);
+  }, [wallet.hasInjectedProvider, wallet.chainId, addr, refreshOnchain]);
+
   const mint = async (tier: ShovelTier) => {
     setStatus(null);
     if (!wallet.account || !wallet.isBsc) {
@@ -80,7 +107,14 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       await tx.wait();
       setStatus(t("mintSuccess"));
       await wallet.refreshUsdt();
-      await refreshOnchain();
+      try {
+        await refreshOnchain();
+      } catch {
+        /* RPC may lag right after inclusion; poll + delayed refresh below */
+      }
+      window.setTimeout(() => {
+        void refreshOnchain();
+      }, 1200);
     } catch (e) {
       setStatus(e instanceof Error ? e.message : String(e));
     }
@@ -156,13 +190,16 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
               </div>
 
               <dl className="tier-stats">
-                <div>
+                <div className="tier-stats__block tier-stats__block--price">
                   <dt>{t("price")}</dt>
-                  <dd>{meta.priceUsdt} USDT</dd>
+                  <dd className="tier-stats__price">
+                    <span className="tier-stats__price-num">{meta.priceUsdt}</span>
+                    <span className="tier-stats__price-unit"> USDT</span>
+                  </dd>
                 </div>
-                <div>
+                <div className="tier-stats__block tier-stats__block--supply">
                   <dt>{t("supply")}</dt>
-                  <dd>
+                  <dd className="tier-stats__supply">
                     {minted !== undefined ? `${minted} / ` : ""}
                     {max}
                   </dd>
