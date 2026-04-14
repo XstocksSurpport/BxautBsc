@@ -21,11 +21,35 @@ if (!site) {
 const outDir = path.join(__dirname, "..", "public", "nft-metadata");
 fs.mkdirSync(outDir, { recursive: true });
 
-const image = {
-  iron: `${site}/nft/iron-shovel.jpg`,
-  silver: `${site}/nft/silver-shovel.jpg`,
-  gold: `${site}/nft/gold-shovel.jpg`,
+const publicNft = path.join(__dirname, "..", "public", "nft");
+const tierJpgs = {
+  iron: path.join(publicNft, "iron-shovel.jpg"),
+  silver: path.join(publicNft, "silver-shovel.jpg"),
+  gold: path.join(publicNft, "gold-shovel.jpg"),
 };
+const hasTierArt =
+  fs.existsSync(tierJpgs.iron) &&
+  fs.existsSync(tierJpgs.silver) &&
+  fs.existsSync(tierJpgs.gold);
+
+/** Wallets resolve `image` over HTTPS; missing files → broken thumbnails on explorers. */
+const image = hasTierArt
+  ? {
+      iron: `${site}/nft/iron-shovel.jpg`,
+      silver: `${site}/nft/silver-shovel.jpg`,
+      gold: `${site}/nft/gold-shovel.jpg`,
+    }
+  : {
+      iron: `${site}/logo.png`,
+      silver: `${site}/logo.png`,
+      gold: `${site}/logo.png`,
+    };
+
+if (!hasTierArt) {
+  console.warn(
+    "public/nft/*.jpg missing — using logo.png for all tiers in metadata. Add iron/silver/gold-shovel.jpg for proper art.",
+  );
+}
 
 function tierForId(id) {
   if (id >= 1 && id <= 666) {
@@ -71,4 +95,9 @@ for (let id = 1; id <= 799; id++) {
 }
 
 console.log("Wrote 799 metadata files to public/nft-metadata/");
-console.log("Images:", image.iron, image.silver, image.gold);
+console.log(
+  hasTierArt ? "Images (tier jpgs):" : "Images (fallback, commit public/nft/*.jpg for tier art):",
+  image.iron,
+  image.silver,
+  image.gold,
+);
