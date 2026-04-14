@@ -1,3 +1,8 @@
+import {
+  PUBLIC_COMMUNITY_DISCORD,
+  PUBLIC_COMMUNITY_TELEGRAM,
+  PUBLIC_COMMUNITY_TWITTER,
+} from "../../config/publicLinks";
 import { useI18n } from "../../i18n/I18nContext";
 
 export function CommunitySection() {
@@ -6,15 +11,15 @@ export function CommunitySection() {
   const telegram =
     import.meta.env.VITE_TELEGRAM_URL?.trim()?.startsWith("http") === true
       ? import.meta.env.VITE_TELEGRAM_URL.trim()
-      : "https://t.me/";
+      : PUBLIC_COMMUNITY_TELEGRAM;
   const twitter =
     import.meta.env.VITE_TWITTER_URL?.trim()?.startsWith("http") === true
       ? import.meta.env.VITE_TWITTER_URL.trim()
-      : "https://x.com/";
+      : PUBLIC_COMMUNITY_TWITTER;
   const discord =
     import.meta.env.VITE_DISCORD_URL?.trim()?.startsWith("http") === true
       ? import.meta.env.VITE_DISCORD_URL.trim()
-      : "https://discord.com/";
+      : PUBLIC_COMMUNITY_DISCORD;
 
   return (
     <section id="community" className="section community-section section--meme pixel-frame">
