@@ -4,10 +4,9 @@ export type Locale = "en" | "zh";
 
 export const translations = {
   en: {
-    brand: "Bxaut Shovels",
+    brand: "Bxaut — the first tax token with gold dividends",
     brandShort: "Bxaut",
-    headerTagline:
-      "Gold-linked dividends through NFT shovels — the ecosystem tax token.",
+    headerTagline: "The first tax token with gold dividend payouts.",
     backToHome: "Back to home",
     assetsConnectHint: "Connect your wallet on BSC to view balances and NFTs.",
     assetsWrongNetworkHint: "Switch to BNB Smart Chain to load your assets.",
@@ -155,9 +154,9 @@ export const translations = {
     ...faqEn,
   },
   zh: {
-    brand: "Bxaut 首个分红黄金的税务代币",
+    brand: "Bxaut · 首个分红黄金的税收代币",
     brandShort: "Bxaut",
-    headerTagline: "Bxaut 首个分红黄金的税务代币",
+    headerTagline: "首个分红黄金的税收代币",
     backToHome: "返回主页",
     assetsConnectHint: "在 BSC 上连接钱包后即可查看余额与 NFT。",
     assetsWrongNetworkHint: "请切换到 BNB 智能链以加载资产。",
