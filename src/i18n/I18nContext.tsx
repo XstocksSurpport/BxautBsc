@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -20,15 +21,20 @@ const STORAGE_KEY = "bxaut_locale";
 
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(() => {
-    if (typeof window === "undefined") return "en";
+    if (typeof window === "undefined") return "zh";
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    return saved === "zh" ? "zh" : "en";
+    if (saved === "en" || saved === "zh") return saved;
+    return "zh";
   });
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
     window.localStorage.setItem(STORAGE_KEY, l);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.lang = locale === "zh" ? "zh-CN" : "en";
+  }, [locale]);
 
   const t = useCallback(
     (key: TranslationKey) => translations[locale][key],
