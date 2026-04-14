@@ -2535,13 +2535,13 @@ body {
     font-size: clamp(12px, 3.2vw, 15px);
   }
 
-  /* Show full shovel art: cover + forced aspect was cropping ~2/3 of the sprite */
+  /* Show full shovel art; +30% vs prior contain sizing (same grid / card width) */
   .tier-art-wrap {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 132px;
-    max-height: 200px;
+    min-height: 172px;
+    max-height: 260px;
     overflow: hidden;
     aspect-ratio: auto;
     padding: 6px 8px;
@@ -2552,7 +2552,7 @@ body {
     width: auto;
     height: auto;
     max-width: 100%;
-    max-height: 176px;
+    max-height: 229px;
     aspect-ratio: unset;
     object-fit: contain;
     object-position: center;
@@ -2758,35 +2758,179 @@ body {
   font-size: 12px;
 }
 
-/* Home dance loop: self-hosted <video>, max height so it stays on screen */
-.mobile-home-dance {
+/* Mobile home: meme rail + abstract stage (replaces former video block) */
+.mobile-home-meme {
   margin-top: 14px;
   width: 100%;
-  max-width: 100%;
-  display: flex;
-  justify-content: center;
+  max-width: min(100%, 340px);
+  margin-left: auto;
+  margin-right: auto;
   flex-shrink: 0;
 }
 
-.mobile-home-dance__inner {
-  width: min(100%, 300px);
-  max-height: min(42vh, 280px);
-  /* Normal stacking: multiply blend was crushing luminance on this dark frame */
-  background: #1a1428;
-  border-radius: 14px;
-  overflow: hidden;
-  box-sizing: border-box;
+.mobile-home-meme__rail {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 10px;
+  margin: 0 -2px;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
 }
 
-.mobile-home-dance__video {
-  width: 100%;
-  height: auto;
-  max-height: min(42vh, 280px);
-  display: block;
-  object-fit: contain;
-  vertical-align: top;
-  mix-blend-mode: normal;
-  filter: brightness(1.12) contrast(1.05) saturate(1.06);
+.mobile-home-meme__rail .meme-pill {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  transform: rotate(-1.5deg);
+}
+
+.mobile-home-meme__rail .meme-pill:nth-child(even) {
+  transform: rotate(2deg) translateY(-2px);
+}
+
+.mobile-home-meme__rail .meme-pill:nth-child(3n) {
+  transform: rotate(-1deg) translateY(3px);
+}
+
+.mobile-home-meme__stage {
+  position: relative;
+  height: 76px;
+  margin-top: 2px;
+  border-radius: 14px;
+  border: 3px dashed rgba(201, 162, 39, 0.4);
+  background:
+    linear-gradient(165deg, rgba(244, 114, 182, 0.08) 0%, transparent 42%),
+    linear-gradient(335deg, rgba(94, 234, 212, 0.07) 0%, transparent 38%),
+    linear-gradient(180deg, #161026 0%, #0c0814 100%);
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.45),
+    0 3px 0 rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+.mobile-home-meme__blob {
+  position: absolute;
+  left: 10%;
+  top: 50%;
+  width: 48px;
+  height: 40px;
+  margin-top: -20px;
+  border: 3px solid #000;
+  border-radius: 46% 54% 52% 48% / 42% 45% 55% 58%;
+  background: linear-gradient(135deg, var(--gold2) 0%, #92400e 100%);
+  box-shadow: 3px 3px 0 #000;
+  animation: mobile-home-meme-wobble 4.2s ease-in-out infinite;
+}
+
+.mobile-home-meme__ring {
+  position: absolute;
+  left: 42%;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border: 4px solid var(--neon-cyan);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2px #000,
+    inset 0 0 0 3px rgba(0, 0, 0, 0.35);
+  opacity: 0.9;
+  animation: mobile-home-meme-spin 14s linear infinite;
+}
+
+.mobile-home-meme__diamond {
+  position: absolute;
+  right: 22%;
+  top: 50%;
+  width: 28px;
+  height: 28px;
+  margin-top: -14px;
+  background: #c4b5fd;
+  border: 3px solid #000;
+  transform: rotate(45deg);
+  box-shadow: 3px 3px 0 #000;
+}
+
+.mobile-home-meme__pixel {
+  position: absolute;
+  right: 8%;
+  bottom: 10px;
+  width: 14px;
+  height: 14px;
+  background: #bef264;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 #000;
+}
+
+.mobile-home-meme__pixel--2 {
+  right: 16%;
+  bottom: 22px;
+  width: 10px;
+  height: 10px;
+  background: #f472b6;
+  animation: mobile-home-meme-blink 2.4s steps(2, end) infinite;
+}
+
+.mobile-home-meme__ascii {
+  position: absolute;
+  left: 8px;
+  bottom: 6px;
+  font-family: "Silkscreen", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fde68a;
+  text-shadow:
+    -1px 0 0 #000,
+    1px 0 0 #000,
+    0 -1px 0 #000,
+    0 1px 0 #000;
+  opacity: 0.85;
+  transform: rotate(-4deg);
+}
+
+@keyframes mobile-home-meme-wobble {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(4px, -2px) rotate(4deg);
+  }
+}
+
+@keyframes mobile-home-meme-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes mobile-home-meme-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+
+  50%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-home-meme__blob,
+  .mobile-home-meme__ring,
+  .mobile-home-meme__pixel--2 {
+    animation: none;
+  }
 }
 
 .mobile-page-section {
