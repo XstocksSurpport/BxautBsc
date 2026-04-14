@@ -1,12 +1,5 @@
 import { BrowserProvider, Contract, JsonRpcProvider } from "ethers";
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type MutableRefObject,
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SHOVEL_NFT_ABI } from "../../config/abis";
 import {
   BSC_CHAIN_ID,
@@ -47,57 +40,38 @@ function chainMintPct(minted: number | undefined, max: number) {
   return Math.min(100, Math.round((1000 * minted) / max) / 10);
 }
 
-/** Simulated curve: iron +1%/h; silver & gold +1%/2h; capped at 60% (see anchor in constants). */
+/** Display-only: +1%/h from anchor per tier; caps at 94% (no further auto increase). */
 function simulatedMintDisplayPct(tier: ShovelTier, nowMs: number) {
   const elapsed = Math.max(0, nowMs - SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS);
   const wholeHours = Math.floor(elapsed / MS_PER_HOUR);
-  const base = tier === 0 ? 54 : tier === 1 ? 28 : 11;
-  const increments =
-    tier === 0 ? wholeHours : Math.floor(wholeHours / 2);
-  return Math.min(60, base + increments);
+  const base = tier === 0 ? 76 : tier === 1 ? 69 : 49;
+  return Math.min(94, base + wholeHours);
 }
 
 /**
- * FOMO curve only (time sim + on-chain blend + pivot after sim hits 60%).
- * Count / bar width come from `mintMeterDisplay`, which floors counts at real minted.
+ * Shown % = max(simulated cap, on-chain %): never under-report real mints; after sim hits 94%,
+ * bar still rises only via on-chain mints (chain can exceed 94% to 100%).
  */
-function curveMintMeterPct(
+function blendMintMeterPct(
   tier: ShovelTier,
   minted: number | undefined,
   max: number,
   nowMs: number,
-  pivotChainPctRef: MutableRefObject<Partial<Record<ShovelTier, number>>>,
 ) {
   const chain = chainMintPct(minted, max);
   const sim = simulatedMintDisplayPct(tier, nowMs);
-  let display: number;
-  if (chain >= 60) {
-    display = chain;
-  } else if (sim < 60) {
-    display = Math.min(60, Math.max(sim, chain));
-  } else if (minted === undefined) {
-    display = 60;
-  } else {
-    if (pivotChainPctRef.current[tier] === undefined) {
-      pivotChainPctRef.current[tier] = chain;
-    }
-    const pivot = pivotChainPctRef.current[tier]!;
-    const raw = 60 + chain - pivot;
-    display = Math.min(100, Math.max(60, raw));
-  }
-  return Math.min(100, Math.round(display * 10) / 10);
+  return Math.min(100, Math.round(Math.max(sim, chain) * 10) / 10);
 }
 
-/** Shown minted + bar %: never below chain `totalMinted`; bar matches the shown count. */
+/** Shown minted + yellow bar %: never below chain `totalMinted`; bar matches the shown count. */
 function mintMeterDisplay(
   tier: ShovelTier,
   minted: number | undefined,
   max: number,
   nowMs: number,
-  pivotChainPctRef: MutableRefObject<Partial<Record<ShovelTier, number>>>,
 ): { displayMinted: number; displayPct: number } {
   if (!max) return { displayMinted: 0, displayPct: 0 };
-  const curvePct = curveMintMeterPct(tier, minted, max, nowMs, pivotChainPctRef);
+  const curvePct = blendMintMeterPct(tier, minted, max, nowMs);
   const curveCount = Math.min(max, Math.max(0, Math.round((curvePct / 100) * max)));
   const onChain = minted !== undefined ? Math.min(max, Math.max(0, minted)) : undefined;
   const displayMinted =
@@ -123,8 +97,6 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
 
   const addr = nftAddress();
   const sectionRef = useRef<HTMLElement>(null);
-  /** When sim time is at 60% but on-chain % is still under 60, lock chain% once so the meter moves with each mint. */
-  const chainMeterPivotPctRef = useRef<Partial<Record<ShovelTier, number>>>({});
   const mintInFlightRef = useRef(false);
   const [mintInView, setMintInView] = useState(true);
   /** Wall-clock tick so the display-only mint meter advances hourly without waiting on RPC. */
@@ -268,13 +240,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     pickMinted >= pickMax;
 
   const nowMs = useMemo(() => Date.now(), [mintMeterTick]);
-  const pickMeter = mintMeterDisplay(
-    mobilePick,
-    pickMinted,
-    pickMax,
-    nowMs,
-    chainMeterPivotPctRef,
-  );
+  const pickMeter = mintMeterDisplay(mobilePick, pickMinted, pickMax, nowMs);
 
   return (
     <section
@@ -312,7 +278,6 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
             minted,
             max,
             nowMs,
-            chainMeterPivotPctRef,
           );
 
           return (

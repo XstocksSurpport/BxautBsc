@@ -15,11 +15,11 @@ export const TREASURY_ADDRESS =
 export type ShovelTier = 0 | 1 | 2;
 
 /**
- * Frontend-only mint meter anchor: 2026-04-14 14:25 UTC+8 (= 06:25 UTC).
- * At this instant, sim = iron 54% / silver 28% / gold 11%; then iron +1%/h,
- * silver & gold +1%/2h until 60%, then bar follows on-chain mint % only.
+ * Frontend-only mint meter anchor: 2026-04-15 07:50 UTC+8 (= 2026-04-14 23:50 UTC).
+ * At anchor: iron 76% / silver 69% / gold 49%; each tier +1%/h (display-only) until sim hits 94%,
+ * then sim stops increasing; shown % is max(sim cap, on-chain %) so real mints drive 94%→100%.
  */
-export const SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS = Date.UTC(2026, 3, 14, 6, 25, 0, 0);
+export const SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS = Date.UTC(2026, 3, 14, 23, 50, 0, 0);
 
 export const SHOVEL_TIERS: Record<
   ShovelTier,
