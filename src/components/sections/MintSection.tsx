@@ -68,6 +68,18 @@ function displayMintProgressPct(
   return Math.min(100, Math.round(display * 10) / 10);
 }
 
+/** Minted count shown in UI; matches `displayMintProgressPct` × max (FOMO curve). */
+function displayMintedForMeter(
+  tier: ShovelTier,
+  minted: number | undefined,
+  max: number,
+  nowMs: number,
+) {
+  if (!max) return 0;
+  const pct = displayMintProgressPct(tier, minted, max, nowMs);
+  return Math.min(max, Math.max(0, Math.round((pct / 100) * max)));
+}
+
 const tierChipKeys = {
   0: "tierChipIron",
   1: "tierChipSilver",
@@ -209,6 +221,12 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     pickMinted >= pickMax;
 
   const nowMs = useMemo(() => Date.now(), [mintMeterTick]);
+  const pickDisplayMinted = displayMintedForMeter(
+    mobilePick,
+    pickMinted,
+    pickMax,
+    nowMs,
+  );
 
   return (
     <section
@@ -242,6 +260,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
           const soldOut =
             minted !== undefined && max !== undefined && minted >= max;
           const pct = displayMintProgressPct(tier, minted, max, nowMs);
+          const displayMinted = displayMintedForMeter(tier, minted, max, nowMs);
 
           return (
             <article
@@ -272,7 +291,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
                 <div className="mint-meter__head">
                   <span className="mint-meter__label">{t("mintProgress")}</span>
                   <span className="mint-meter__frac">
-                    {minted !== undefined ? minted : "—"} / {max}
+                    {displayMinted} / {max}
                   </span>
                 </div>
                 <div className="mint-meter__track">
@@ -293,8 +312,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
                 <div>
                   <dt>{t("supply")}</dt>
                   <dd className="tier-stats__value tier-stats__value--supply">
-                    {minted !== undefined ? `${minted} / ` : ""}
-                    {max}
+                    {displayMinted} / {max}
                   </dd>
                 </div>
               </dl>
@@ -357,7 +375,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
             ·
           </span>
           <span className="mint-mobile-cta__frac mono">
-            {pickMinted !== undefined ? pickMinted : "—"} / {pickMax}
+            {pickDisplayMinted} / {pickMax}
           </span>
           {pickSoldOut ? (
             <span className="mint-mobile-cta__badge">{t("soldOut")}</span>
