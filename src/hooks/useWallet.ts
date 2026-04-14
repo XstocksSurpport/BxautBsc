@@ -194,7 +194,10 @@ export function useWallet() {
     shorten: account ? shortenAddress(account) : "",
     refreshUsdt,
     hasInjectedProvider: Boolean(window.ethereum),
-    /** Approve exactly `minAmount` for this spend (not unlimited) — fewer false flags from wallet security scanners. */
+    /**
+     * Approve exactly `minAmount` for this spend (not unlimited).
+     * If allowance is non-zero but insufficient, reset to 0 first — required by some USDT-style tokens.
+     */
     approveUsdt: async (spender: string, minAmount: bigint) => {
       if (!window.ethereum || !account) throw new Error("Wallet not ready");
       const browserProvider = new BrowserProvider(window.ethereum);
@@ -202,6 +205,10 @@ export function useWallet() {
       const usdt = new Contract(BSC_USDT_ADDRESS, ERC20_ABI, signer);
       const current: bigint = await usdt.allowance(account, spender);
       if (current >= minAmount) return null;
+      if (current > 0n) {
+        const reset = await usdt.approve(spender, 0);
+        await reset.wait();
+      }
       const tx = await usdt.approve(spender, minAmount);
       return tx;
     },

@@ -220,6 +220,11 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       setStatus(t("mintStepMint"));
       const tx = await nft.mint(tier);
       await tx.wait();
+      setOnchain((prev) => {
+        const cur = prev[tier] ?? {};
+        const nextMinted = (cur.minted ?? 0n) + 1n;
+        return { ...prev, [tier]: { ...cur, minted: nextMinted } };
+      });
       setStatus(t("mintSuccess"));
       await wallet.refreshUsdt();
       requestShovelHoldingsRefresh();

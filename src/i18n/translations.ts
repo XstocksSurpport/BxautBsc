@@ -55,7 +55,7 @@ export const translations = {
     mintSuccess: "Mint submitted. Check your wallet or BscScan.",
     mintStepApprove: "Step 1/2: Approving USDT (no USDT sent yet)…",
     mintStepMint:
-      "Step 2/2: Minting — USDT is transferred to treasury in this transaction.",
+      "Step 2/2: Minting — USDT goes to treasury inside this call. Some wallets only preview the NFT; USDT still moves on-chain (check Advanced / BscScan).",
     marketTitle: "Shovel Black Market",
     marketBody: "Coming soon",
     dividendTitle: "Claim XAUT gold-linked dividends",
@@ -204,7 +204,8 @@ export const translations = {
     connectFirst: "请在 BSC 上连接钱包后再铸造。",
     mintSuccess: "交易已提交，请在钱包或 BscScan 查看。",
     mintStepApprove: "第 1/2 步：正在授权 USDT（此步不划扣 USDT）…",
-    mintStepMint: "第 2/2 步：正在铸造（USDT 在本笔交易中划扣至国库）…",
+    mintStepMint:
+      "第 2/2 步：正在铸造（USDT 在本笔合约调用中划扣至国库）。部分钱包只显示收到 NFT，USDT 仍会链上转出，可在高级详情或 BscScan 核对。",
     marketTitle: "铲子黑市",
     marketBody: "暂未开放",
     dividendTitle: "XAUT黄金分红领取",
