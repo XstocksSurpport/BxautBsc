@@ -1,6 +1,6 @@
 import { Header } from "./components/Header";
 import { PromoRollVideo } from "./components/PromoRollVideo";
-import { TopNav } from "./components/TopNav";
+import { BottomTabNav, TopNav } from "./components/TopNav";
 import { CommunitySection } from "./components/sections/CommunitySection";
 import { DividendSection } from "./components/sections/DividendSection";
 import { MarketplaceSection } from "./components/sections/MarketplaceSection";
@@ -33,6 +33,7 @@ function Shell() {
         <CommunitySection />
       </main>
       <div className="bottom-dock pixel-frame">
+        <BottomTabNav />
         <footer className="site-credit">
           <p>{t("siteCredit")}</p>
         </footer>

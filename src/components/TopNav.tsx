@@ -24,13 +24,39 @@ const keys = {
   community: "navCommunity",
 } as const satisfies Record<(typeof sections)[number], TranslationKey>;
 
+function scrollToSection(id: string) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+}
+
+/** Horizontal strip for small screens; lives in `.bottom-dock`. */
+export function BottomTabNav() {
+  const { t } = useI18n();
+
+  return (
+    <nav className="bottom-tab-nav" aria-label="Primary">
+      <div className="bottom-tab-nav__track">
+        {sections.map((id) => (
+          <button
+            key={id}
+            type="button"
+            className="bottom-tab-nav__btn"
+            onClick={() => scrollToSection(id)}
+          >
+            {t(keys[id])}
+          </button>
+        ))}
+      </div>
+    </nav>
+  );
+}
+
 export function TopNav() {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
   const scrollTo = useCallback((id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    scrollToSection(id);
     setOpen(false);
   }, []);
 
@@ -52,7 +78,7 @@ export function TopNav() {
   }, [open]);
 
   return (
-    <nav className="top-nav pixel-frame" aria-label="Primary">
+    <nav className="top-nav top-nav--desktop pixel-frame" aria-label="Primary">
       <div className="top-nav-dropdown" ref={rootRef}>
         <button
           type="button"
