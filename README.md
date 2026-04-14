@@ -52,9 +52,13 @@ Use the **exact** trailing slash as in your live `nft-metadata/` URL.
 
 See `package.json` scripts: `compile:contracts`, `deploy:shovel`, `verify:shovel`, `export:bscscan-shovel`, `shovel:set-baseuri`, etc.
 
+### BXAUT token (5% buy / 5% sell tax)
+
+`contracts/BXAUT.sol`: full supply minted to **`treasury`** at deploy; **deployer** is **`Ownable` owner**. Tax applies only after **`enableTrading()`** and only when the counterparty is the configured Pancake **LP `pair`** (5% on buys from pair, 5% on sells to pair). **Launch order:** add liquidity while `tradingEnabled` is false → **`setPair`** → **`enableTrading()`**. Owner may **`setFeeReceiver`**, **`setExcludedFromTax`**, then renounce ownership if desired.
+
 ### Verify BXAUT on BscScan (open source)
 
-BXAUT is `contracts/BXAUT.sol`: constructor **`(address treasury)`** — full supply is minted to that address at deploy.
+BXAUT constructor is still **`(address treasury)`** — same as deploy script.
 
 **API verify** (needs `ETHERSCAN_API_KEY` or `BSCSCAN_API_KEY` in `.env`):
 
