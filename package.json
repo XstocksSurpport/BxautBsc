@@ -17,7 +17,9 @@
     "deploy:shovel:testnet": "hardhat run scripts/deploy-shovel-nft.cjs --network bscTestnet",
     "deploy:shovel": "hardhat run scripts/deploy-shovel-nft.cjs --network bsc",
     "verify:shovel": "hardhat run scripts/verify-shovel-nft.cjs --network bsc",
+    "verify:bxaut": "hardhat run scripts/verify-bxaut.cjs --network bsc",
     "export:bscscan-shovel": "node scripts/export-shovel-bscscan-json.cjs",
+    "export:bscscan-bxaut": "node scripts/export-bscscan-bxaut-json.cjs",
     "shovel:set-baseuri": "hardhat run scripts/set-shovel-baseuri.cjs --network bsc",
     "shovel:set-baseuri:testnet": "hardhat run scripts/set-shovel-baseuri.cjs --network bscTestnet"
   },

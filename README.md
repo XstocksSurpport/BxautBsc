@@ -52,6 +52,30 @@ Use the **exact** trailing slash as in your live `nft-metadata/` URL.
 
 See `package.json` scripts: `compile:contracts`, `deploy:shovel`, `verify:shovel`, `export:bscscan-shovel`, `shovel:set-baseuri`, etc.
 
+### Verify BXAUT on BscScan (open source)
+
+BXAUT is `contracts/BXAUT.sol`: constructor **`(address treasury)`** — full supply is minted to that address at deploy.
+
+**API verify** (needs `ETHERSCAN_API_KEY` or `BSCSCAN_API_KEY` in `.env`):
+
+```bash
+npm run compile:contracts
+set BXAUT_TOKEN_ADDRESS=0xYourDeployedBxaut
+set BXAUT_VERIFY_TREASURY=0xTreasuryUsedInConstructor
+npm run verify:bxaut
+```
+
+Use the **exact** treasury from the deployment transaction (default product deploy uses `0x5AD2F3984258038Cfcb350CF30414FFF211428D8` if you did not override `BXAUT_TREASURY`).
+
+**Manual verify** (BscScan → **Verify and Publish** → **Solidity (Standard JSON Input)**):
+
+```bash
+npm run compile:contracts
+npm run export:bscscan-bxaut
+```
+
+Upload the generated `bscscan-BXAUT-standard-input.json` (repo root) or `contracts/bscscan-BXAUT-standard-input.json`. Compiler **0.8.20**, optimizer **200 runs**. If BscScan asks for constructor arguments, ABI-encode the single `address` treasury (same as deploy).
+
 ## Security
 
 Never commit private keys or API keys. `contracts/.env` and root `.env` are gitignored.

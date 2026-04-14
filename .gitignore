@@ -9,6 +9,8 @@ contracts/cache
 contracts/artifacts
 contracts/bscscan-ShovelNFT-standard-input.json
 bscscan-ShovelNFT-standard-input.json
+contracts/bscscan-BXAUT-standard-input.json
+bscscan-BXAUT-standard-input.json
 coverage
 coverage.json
 
