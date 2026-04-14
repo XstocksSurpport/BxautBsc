@@ -57,10 +57,10 @@ function simulatedMintDisplayPct(tier: ShovelTier, nowMs: number) {
 }
 
 /**
- * Blends sim (below 60%) with on-chain %; after sim hits 60%, each +Δ on-chain
- * adds Δ to the shown % from a 60% floor (pivot = chain % when pivot first locks).
+ * FOMO curve only (time sim + on-chain blend + pivot after sim hits 60%).
+ * Count / bar width come from `mintMeterDisplay`, which floors counts at real minted.
  */
-function displayMintProgressPct(
+function curveMintMeterPct(
   tier: ShovelTier,
   minted: number | undefined,
   max: number,
@@ -87,17 +87,22 @@ function displayMintProgressPct(
   return Math.min(100, Math.round(display * 10) / 10);
 }
 
-/** Minted count shown in UI; matches `displayMintProgressPct` × max (FOMO curve). */
-function displayMintedForMeter(
+/** Shown minted + bar %: never below chain `totalMinted`; bar matches the shown count. */
+function mintMeterDisplay(
   tier: ShovelTier,
   minted: number | undefined,
   max: number,
   nowMs: number,
   pivotChainPctRef: MutableRefObject<Partial<Record<ShovelTier, number>>>,
-) {
-  if (!max) return 0;
-  const pct = displayMintProgressPct(tier, minted, max, nowMs, pivotChainPctRef);
-  return Math.min(max, Math.max(0, Math.round((pct / 100) * max)));
+): { displayMinted: number; displayPct: number } {
+  if (!max) return { displayMinted: 0, displayPct: 0 };
+  const curvePct = curveMintMeterPct(tier, minted, max, nowMs, pivotChainPctRef);
+  const curveCount = Math.min(max, Math.max(0, Math.round((curvePct / 100) * max)));
+  const onChain = minted !== undefined ? Math.min(max, Math.max(0, minted)) : undefined;
+  const displayMinted =
+    onChain !== undefined ? Math.min(max, Math.max(onChain, curveCount)) : curveCount;
+  const displayPct = Math.min(100, Math.round((1000 * displayMinted) / max) / 10);
+  return { displayMinted, displayPct };
 }
 
 const tierChipKeys = {
@@ -244,7 +249,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     pickMinted >= pickMax;
 
   const nowMs = useMemo(() => Date.now(), [mintMeterTick]);
-  const pickDisplayMinted = displayMintedForMeter(
+  const pickMeter = mintMeterDisplay(
     mobilePick,
     pickMinted,
     pickMax,
@@ -283,14 +288,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
           const max = o?.max !== undefined ? Number(o.max) : meta.supply;
           const soldOut =
             minted !== undefined && max !== undefined && minted >= max;
-          const pct = displayMintProgressPct(
-            tier,
-            minted,
-            max,
-            nowMs,
-            chainMeterPivotPctRef,
-          );
-          const displayMinted = displayMintedForMeter(
+          const { displayMinted, displayPct } = mintMeterDisplay(
             tier,
             minted,
             max,
@@ -333,7 +331,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
                 <div className="mint-meter__track">
                   <div
                     className="mint-meter__fill mint-meter__fill--yellow"
-                    style={{ width: `${pct}%` }}
+                    style={{ width: `${displayPct}%` }}
                   />
                 </div>
               </div>
@@ -411,7 +409,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
             ·
           </span>
           <span className="mint-mobile-cta__frac mono">
-            {pickDisplayMinted} / {pickMax}
+            {pickMeter.displayMinted} / {pickMax}
           </span>
           {pickSoldOut ? (
             <span className="mint-mobile-cta__badge">{t("soldOut")}</span>
