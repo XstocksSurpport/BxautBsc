@@ -49,12 +49,35 @@ async function main() {
   console.log("Verifying BXAUT at", address);
   console.log("Constructor args: [treasury] =", treasury);
 
-  await hre.run("verify:verify", {
-    address,
-    constructorArguments: [treasury],
-  });
-
-  console.log("Verification submitted. Check the contract page on BscScan.");
+  try {
+    await hre.run("verify:verify", {
+      address,
+      constructorArguments: [treasury],
+    });
+    console.log("Verification submitted. Check the contract page on BscScan.");
+  } catch (e) {
+    const msg = String(e?.message || e);
+    if (msg.includes("bytecode") || e?.name === "DeployedBytecodeMismatchError") {
+      const encoded = new hre.ethers.AbiCoder().encode(["address"], [treasury]);
+      console.error("\n--- API verify failed: on-chain bytecode ≠ this repo’s compile ---");
+      console.error(
+        "Deploy may have used different Solidity/OZ settings, or this source changed after deploy.",
+      );
+      console.error("\nManual verify on BscScan:");
+      console.error("  1) npm run compile:contracts && npm run export:bscscan-bxaut");
+      console.error("  2) BscScan → search contract address → Contract → Verify and Publish");
+      console.error("     https://bscscan.com/address/" + address + "#code");
+      console.error('  3) Compiler type: "Solidity (Standard JSON Input)"');
+      console.error(
+        "  4) Compiler: v0.8.20+commit.a1b79de6 (match export script output), Optimization: Yes, 200 runs",
+      );
+      console.error("  5) Upload: bscscan-BXAUT-standard-input.json (repo root or contracts/)");
+      console.error("  6) Constructor args ABI-encoded (single address treasury):");
+      console.error("     ", encoded);
+      console.error("\nTreasury used above MUST match the deployment tx input.\n");
+    }
+    throw e;
+  }
 }
 
 main().catch((e) => {
