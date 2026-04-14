@@ -1,13 +1,18 @@
+import { useMemo } from "react";
+import { mediaUrlFallbackChain } from "../config/publicPath";
+import { shovelSourcesForTokenId } from "../config/shovelTierArt";
 import { usePendingBxautFromShovels } from "../hooks/usePendingBxautFromShovels";
 import { useShovelNftGallery } from "../hooks/useShovelNftGallery";
 import type { WalletApi } from "../hooks/useWallet";
 import { useI18n } from "../i18n/I18nContext";
-import { publicAsset } from "../config/publicPath";
+import { SafeImg } from "./SafeImg";
 
-function fallbackShovelImage(tokenId: number): string {
-  if (tokenId >= 1 && tokenId <= 666) return publicAsset("nft/iron-shovel.jpg");
-  if (tokenId >= 667 && tokenId <= 777) return publicAsset("nft/silver-shovel.jpg");
-  return publicAsset("nft/gold-shovel.jpg");
+function NftThumb({ image, tokenId }: { image: string; tokenId: number }) {
+  const sources = useMemo(
+    () => [...(image ? mediaUrlFallbackChain(image) : []), ...shovelSourcesForTokenId(tokenId)],
+    [image, tokenId],
+  );
+  return <SafeImg className="my-nfts-thumb" sources={sources} alt="" />;
 }
 
 export function AssetsSubPage({
@@ -110,13 +115,7 @@ export function AssetsSubPage({
                 {items.map((it) => (
                   <li key={it.tokenId} className="my-nfts-card pixel-frame">
                     <div className="my-nfts-thumb-wrap">
-                      <img
-                        className="my-nfts-thumb"
-                        src={it.image || fallbackShovelImage(it.tokenId)}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                      />
+                      <NftThumb image={it.image} tokenId={it.tokenId} />
                     </div>
                     <p className="my-nfts-name">{it.name}</p>
                     <p className="my-nfts-id mono">#{it.tokenId}</p>

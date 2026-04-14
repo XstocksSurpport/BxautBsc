@@ -1,6 +1,6 @@
 import { BrowserProvider, Contract } from "ethers";
 import { SHOVEL_NFT_ABI } from "../config/abis";
-import { resolveMediaUri } from "../config/publicPath";
+import { mediaUrlFallbackChain } from "../config/publicPath";
 
 export type OwnedNftDisplay = {
   tokenId: number;
@@ -70,16 +70,27 @@ export async function loadOwnedShovelNfts(
     let name = `Bxaut Shovel #${tokenId}`;
     let image = "";
     try {
-      const uri = (await c.tokenURI(tokenId)) as string;
-      const resolved = resolveMediaUri(uri);
-      const res = await fetch(resolved);
-      if (res.ok) {
-        const json = (await res.json()) as { name?: string; image?: string };
-        if (typeof json.name === "string") name = json.name;
-        if (typeof json.image === "string") image = resolveMediaUri(json.image);
+      const uri = String(await c.tokenURI(tokenId)).trim();
+      if (uri) {
+        let json: { name?: string; image?: string } | null = null;
+        for (const u of mediaUrlFallbackChain(uri)) {
+          try {
+            const res = await fetch(u);
+            if (res.ok) {
+              json = (await res.json()) as { name?: string; image?: string };
+              break;
+            }
+          } catch {
+            /* try next IPFS gateway / mirror */
+          }
+        }
+        if (json) {
+          if (typeof json.name === "string") name = json.name;
+          if (typeof json.image === "string") image = json.image.trim();
+        }
       }
     } catch {
-      /* metadata unreachable (e.g. localhost tokenURI) */
+      /* tokenURI or fetch failed */
     }
     out.push({ tokenId, name, image });
   }

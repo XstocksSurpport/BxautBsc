@@ -9,15 +9,16 @@ import {
   type ShovelTier,
 } from "../../config/constants";
 import { displayShovelNftAddress } from "../../config/publicAddresses";
-import { publicAsset } from "../../config/publicPath";
+import { shovelTierImageSources } from "../../config/shovelTierArt";
 import { requestShovelHoldingsRefresh } from "../../lib/shovelHoldingsRefresh";
 import type { WalletApi } from "../../hooks/useWallet";
 import { useI18n } from "../../i18n/I18nContext";
+import { SafeImg } from "../SafeImg";
 
-const tierImages: Record<ShovelTier, string> = {
-  0: publicAsset("nft/iron-shovel.jpg"),
-  1: publicAsset("nft/silver-shovel.jpg"),
-  2: publicAsset("nft/gold-shovel.jpg"),
+const SHOVEL_TIER_ART_SOURCES: Record<ShovelTier, readonly string[]> = {
+  0: shovelTierImageSources(0),
+  1: shovelTierImageSources(1),
+  2: shovelTierImageSources(2),
 };
 
 const tierTitleKeys = {
@@ -208,8 +209,8 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
               <div className="equip-card__shine" aria-hidden />
               <div className="equip-card__corners" aria-hidden />
               <div className="tier-art-wrap">
-                <img
-                  src={tierImages[tier]}
+                <SafeImg
+                  sources={SHOVEL_TIER_ART_SOURCES[tier]}
                   alt=""
                   className="tier-art"
                   loading="lazy"

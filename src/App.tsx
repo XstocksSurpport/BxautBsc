@@ -1,3 +1,4 @@
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Header } from "./components/Header";
 import { PromoRollVideo } from "./components/PromoRollVideo";
 import { BottomTabNav } from "./components/TopNav";
@@ -60,11 +61,13 @@ function Shell() {
 export default function App() {
   return (
     <I18nProvider>
-      <MobileTabProvider>
-        <AssetsPageProvider>
-          <Shell />
-        </AssetsPageProvider>
-      </MobileTabProvider>
+      <ErrorBoundary>
+        <MobileTabProvider>
+          <AssetsPageProvider>
+            <Shell />
+          </AssetsPageProvider>
+        </MobileTabProvider>
+      </ErrorBoundary>
     </I18nProvider>
   );
 }

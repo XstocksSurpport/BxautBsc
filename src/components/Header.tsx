@@ -2,7 +2,13 @@ import type { WalletApi } from "../hooks/useWallet";
 import { useAssetsPage } from "../context/AssetsPageContext";
 import { useI18n } from "../i18n/I18nContext";
 import { publicAsset } from "../config/publicPath";
+import { SafeImg } from "./SafeImg";
 import { SectionNavMenu } from "./TopNav";
+
+const HEADER_LOGO_SOURCES: readonly string[] = [
+  publicAsset("logo.png"),
+  publicAsset("favicon.svg"),
+];
 
 export function Header({ wallet }: { wallet: WalletApi }) {
   const { locale, setLocale, t } = useI18n();
@@ -20,13 +26,13 @@ export function Header({ wallet }: { wallet: WalletApi }) {
       </button>
 
       <div className="brand-center brand-center--compact">
-        <img
+        <SafeImg
           className="brand-logo"
-          src={publicAsset("logo.png")}
+          sources={HEADER_LOGO_SOURCES}
           alt="Bxaut"
           width={44}
           height={44}
-          decoding="async"
+          loading="eager"
         />
         <div className="brand-text-stack">
           <h1 className="brand-short">{t("brandShort")}</h1>
