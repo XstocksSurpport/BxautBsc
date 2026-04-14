@@ -4,7 +4,7 @@
  * Needs ETHERSCAN_API_KEY or BSCSCAN_API_KEY in .env or contracts/.env.
  *
  * PowerShell:
- *   $env:BXAUT_TOKEN_ADDRESS = "0x9674AB0C99eAfE7d20158d360cE13E4D671Aa09C"
+ *   $env:BXAUT_TOKEN_ADDRESS = "0x7CEC027078C6783C675277159290CDDc43Aa2e47"
  *   $env:BXAUT_VERIFY_TREASURY = "0x5AD2F3984258038Cfcb350CF30414FFF211428D8"
  *   npx hardhat run scripts/verify-bxaut.cjs --network bsc
  *

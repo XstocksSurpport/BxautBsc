@@ -3,7 +3,7 @@ import { TREASURY_ADDRESS } from "./constants";
 
 /** Defaults when env is unset (BSC mainnet product addresses). */
 export const PUBLIC_BSC_BXAUT =
-  "0x9674AB0C99eAfE7d20158d360cE13E4D671Aa09C" as const;
+  "0x7CEC027078C6783C675277159290CDDc43Aa2e47" as const;
 export const PUBLIC_BSC_XAUT =
   "0x21cAef8A43163Eea865baeE23b9C2E327696A3bf" as const;
 export const PUBLIC_BSC_SHOVEL_NFT =
