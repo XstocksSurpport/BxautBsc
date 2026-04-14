@@ -53,6 +53,9 @@ export const translations = {
       "Set VITE_SHOVEL_NFT_ADDRESS in your environment to enable minting.",
     connectFirst: "Connect your wallet on BSC to mint.",
     mintSuccess: "Mint submitted. Check your wallet or BscScan.",
+    mintStepApprove: "Step 1/2: Approving USDT (no USDT sent yet)…",
+    mintStepMint:
+      "Step 2/2: Minting — USDT is transferred to treasury in this transaction.",
     marketTitle: "Shovel Black Market",
     marketBody: "Coming soon",
     dividendTitle: "Claim XAUT gold-linked dividends",
@@ -200,6 +203,8 @@ export const translations = {
     configureContract: "请在环境变量中设置 VITE_SHOVEL_NFT_ADDRESS 以启用铸造。",
     connectFirst: "请在 BSC 上连接钱包后再铸造。",
     mintSuccess: "交易已提交，请在钱包或 BscScan 查看。",
+    mintStepApprove: "第 1/2 步：正在授权 USDT（此步不划扣 USDT）…",
+    mintStepMint: "第 2/2 步：正在铸造（USDT 在本笔交易中划扣至国库）…",
     marketTitle: "铲子黑市",
     marketBody: "暂未开放",
     dividendTitle: "XAUT黄金分红领取",

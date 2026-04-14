@@ -1,5 +1,12 @@
 import { BrowserProvider, Contract } from "ethers";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MutableRefObject,
+} from "react";
 import { SHOVEL_NFT_ABI } from "../../config/abis";
 import {
   BSC_CHAIN_ID,
@@ -49,22 +56,33 @@ function simulatedMintDisplayPct(tier: ShovelTier, nowMs: number) {
   return Math.min(60, base + increments);
 }
 
-/** Blends sim (below 60%) with on-chain %; from 60% onward follows real mints. */
+/**
+ * Blends sim (below 60%) with on-chain %; after sim hits 60%, each +Δ on-chain
+ * adds Δ to the shown % from a 60% floor (pivot = chain % when pivot first locks).
+ */
 function displayMintProgressPct(
   tier: ShovelTier,
   minted: number | undefined,
   max: number,
   nowMs: number,
+  pivotChainPctRef: MutableRefObject<Partial<Record<ShovelTier, number>>>,
 ) {
   const chain = chainMintPct(minted, max);
   const sim = simulatedMintDisplayPct(tier, nowMs);
   let display: number;
   if (chain >= 60) {
     display = chain;
-  } else if (sim >= 60) {
-    display = Math.max(60, chain);
-  } else {
+  } else if (sim < 60) {
     display = Math.min(60, Math.max(sim, chain));
+  } else if (minted === undefined) {
+    display = 60;
+  } else {
+    if (pivotChainPctRef.current[tier] === undefined) {
+      pivotChainPctRef.current[tier] = chain;
+    }
+    const pivot = pivotChainPctRef.current[tier]!;
+    const raw = 60 + chain - pivot;
+    display = Math.min(100, Math.max(60, raw));
   }
   return Math.min(100, Math.round(display * 10) / 10);
 }
@@ -75,9 +93,10 @@ function displayMintedForMeter(
   minted: number | undefined,
   max: number,
   nowMs: number,
+  pivotChainPctRef: MutableRefObject<Partial<Record<ShovelTier, number>>>,
 ) {
   if (!max) return 0;
-  const pct = displayMintProgressPct(tier, minted, max, nowMs);
+  const pct = displayMintProgressPct(tier, minted, max, nowMs, pivotChainPctRef);
   return Math.min(max, Math.max(0, Math.round((pct / 100) * max)));
 }
 
@@ -98,6 +117,8 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
 
   const addr = nftAddress();
   const sectionRef = useRef<HTMLElement>(null);
+  /** When sim time is at 60% but on-chain % is still under 60, lock chain% once so the meter moves with each mint. */
+  const chainMeterPivotPctRef = useRef<Partial<Record<ShovelTier, number>>>({});
   const [mintInView, setMintInView] = useState(true);
   /** Wall-clock tick so the display-only mint meter advances hourly without waiting on RPC. */
   const [mintMeterTick, setMintMeterTick] = useState(0);
@@ -188,9 +209,10 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     const price = tierPriceWei(tier);
 
     try {
-      setStatus(t("txPending"));
+      setStatus(t("mintStepApprove"));
       const approveTx = await wallet.approveUsdt(addr, price);
       if (approveTx) await approveTx.wait();
+      setStatus(t("mintStepMint"));
       const tx = await nft.mint(tier);
       await tx.wait();
       setStatus(t("mintSuccess"));
@@ -227,6 +249,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     pickMinted,
     pickMax,
     nowMs,
+    chainMeterPivotPctRef,
   );
 
   return (
@@ -260,8 +283,20 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
           const max = o?.max !== undefined ? Number(o.max) : meta.supply;
           const soldOut =
             minted !== undefined && max !== undefined && minted >= max;
-          const pct = displayMintProgressPct(tier, minted, max, nowMs);
-          const displayMinted = displayMintedForMeter(tier, minted, max, nowMs);
+          const pct = displayMintProgressPct(
+            tier,
+            minted,
+            max,
+            nowMs,
+            chainMeterPivotPctRef,
+          );
+          const displayMinted = displayMintedForMeter(
+            tier,
+            minted,
+            max,
+            nowMs,
+            chainMeterPivotPctRef,
+          );
 
           return (
             <article
