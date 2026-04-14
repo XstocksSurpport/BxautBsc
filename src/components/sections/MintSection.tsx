@@ -35,9 +35,17 @@ function mintPct(minted: number | undefined, max: number) {
   return Math.min(100, Math.round((1000 * minted) / max) / 10);
 }
 
+const tierChipKeys = {
+  0: "tierChipIron",
+  1: "tierChipSilver",
+  2: "tierChipGold",
+} as const;
+
 export function MintSection({ wallet }: { wallet: WalletApi }) {
   const { t, locale } = useI18n();
   const [status, setStatus] = useState<string | null>(null);
+  /** Mobile quick-mint: default gold (rarest). */
+  const [mobilePick, setMobilePick] = useState<ShovelTier>(2);
   const [onchain, setOnchain] = useState<
     Partial<Record<ShovelTier, { minted?: bigint; max?: bigint }>>
   >({});
@@ -124,6 +132,17 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     }
   };
 
+  const pickMeta = SHOVEL_TIERS[mobilePick];
+  const pickO = onchain[mobilePick];
+  const pickMinted =
+    pickO?.minted !== undefined ? Number(pickO.minted) : undefined;
+  const pickMax =
+    pickO?.max !== undefined ? Number(pickO.max) : pickMeta.supply;
+  const pickSoldOut =
+    pickMinted !== undefined &&
+    pickMax !== undefined &&
+    pickMinted >= pickMax;
+
   return (
     <section id="mint" className="section mint-section section--meme pixel-frame">
       <div className="section-head">
@@ -132,7 +151,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
         <p className="section-note mint-rarity-note">{t("rarityNote")}</p>
       </div>
 
-      <div className="meme-rail" aria-hidden>
+      <div className="meme-rail meme-rail--mint" aria-hidden>
         <span className="meme-pill meme-pill--pink">{t("memePillGm")}</span>
         <span className="meme-pill meme-pill--cyan">{t("memePillWagmi")}</span>
         <span className="meme-pill meme-pill--gold">{t("memePillLfg")}</span>
@@ -231,7 +250,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
               </p>
               <button
                 type="button"
-                className="btn btn-gold btn-block equip-action"
+                className="btn btn-gold btn-block equip-action equip-action--card"
                 disabled={!wallet.account || !wallet.isBsc || soldOut}
                 onClick={() => void mint(tier)}
               >
@@ -242,6 +261,46 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
         })}
       </div>
 
+      <div className="mint-mobile-cta">
+        <p className="mint-mobile-cta__hint">{t("mintMobilePick")}</p>
+        <div className="mint-tier-chips" role="tablist" aria-label={t("mintMobilePick")}>
+          {([2, 1, 0] as ShovelTier[]).map((tier) => {
+            const k = SHOVEL_TIERS[tier].key;
+            return (
+              <button
+                key={tier}
+                type="button"
+                role="tab"
+                aria-selected={mobilePick === tier}
+                className={`mint-tier-chip mint-tier-chip--${k}${mobilePick === tier ? " is-selected" : ""}`}
+                onClick={() => setMobilePick(tier)}
+              >
+                {t(tierChipKeys[tier])}
+              </button>
+            );
+          })}
+        </div>
+        <p className="mint-mobile-cta__summary">
+          <span className="mint-mobile-cta__price">{pickMeta.priceUsdt} USDT</span>
+          <span className="mint-mobile-cta__sep" aria-hidden>
+            ·
+          </span>
+          <span className="mint-mobile-cta__frac mono">
+            {pickMinted !== undefined ? pickMinted : "—"} / {pickMax}
+          </span>
+          {pickSoldOut ? (
+            <span className="mint-mobile-cta__badge">{t("soldOut")}</span>
+          ) : null}
+        </p>
+        <button
+          type="button"
+          className="btn btn-gold mint-mobile-primary"
+          disabled={!wallet.account || !wallet.isBsc || pickSoldOut}
+          onClick={() => void mint(mobilePick)}
+        >
+          {pickSoldOut ? t("soldOut") : t("mintPrimaryCta")}
+        </button>
+      </div>
     </section>
   );
 }

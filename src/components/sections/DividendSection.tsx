@@ -105,8 +105,10 @@ export function DividendSection({ wallet }: { wallet: WalletApi }) {
       </div>
 
       <TokenomicsBlock />
-      <StakingModule />
-      <GovernanceModule />
+      <div className="submodule-pair">
+        <StakingModule />
+        <GovernanceModule />
+      </div>
       <FaqModule />
     </section>
   );

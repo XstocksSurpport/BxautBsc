@@ -8,8 +8,11 @@ export function Header({ wallet }: { wallet: WalletApi }) {
   const { locale, setLocale, t } = useI18n();
   const pendingBxaut = usePendingBxautFromShovels(wallet);
 
+  const headerMod =
+    wallet.account && wallet.isBsc ? " app-header--wallet-sheet" : "";
+
   return (
-    <header className="app-header">
+    <header className={`app-header${headerMod}`}>
       <button
         type="button"
         className="btn btn-ghost lang-toggle"
@@ -34,14 +37,25 @@ export function Header({ wallet }: { wallet: WalletApi }) {
       <div className="wallet-cluster">
         {wallet.account && wallet.isBsc && (
           <div className="wallet-info pixel-card">
+            <div className="wallet-info__toprow">
+              <span className="wallet-info__addr mono">{wallet.shorten}</span>
+              <button
+                type="button"
+                className="btn btn-outline wallet-info__disconnect"
+                onClick={() => wallet.disconnect()}
+              >
+                {t("disconnect")}
+              </button>
+            </div>
             <span className="wallet-assets-label">{t("assetsLabel")}</span>
-            <span className="mono">{wallet.shorten}</span>
             {wallet.usdtBalance !== null && (
               <span className="usdt-pill">
-                {t("usdtBalance")}:{" "}
-                {Number(wallet.usdtBalance).toLocaleString(undefined, {
-                  maximumFractionDigits: 4,
-                })}
+                <span className="usdt-pill__k">{t("usdtBalance")}</span>
+                <span className="usdt-pill__v">
+                  {Number(wallet.usdtBalance).toLocaleString(undefined, {
+                    maximumFractionDigits: 4,
+                  })}
+                </span>
               </span>
             )}
             {pendingBxaut.show && (
@@ -76,7 +90,7 @@ export function Header({ wallet }: { wallet: WalletApi }) {
             {t("wrongNetwork")}
           </button>
         )}
-        {wallet.account ? (
+        {wallet.account && !wallet.isBsc ? (
           <button
             type="button"
             className="btn btn-outline"
@@ -84,7 +98,8 @@ export function Header({ wallet }: { wallet: WalletApi }) {
           >
             {t("disconnect")}
           </button>
-        ) : (
+        ) : null}
+        {!wallet.account ? (
           <button
             type="button"
             className="btn btn-gold"
@@ -93,7 +108,7 @@ export function Header({ wallet }: { wallet: WalletApi }) {
           >
             {t("connect")}
           </button>
-        )}
+        ) : null}
       </div>
     </header>
   );

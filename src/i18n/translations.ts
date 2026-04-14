@@ -6,6 +6,9 @@ export const translations = {
   en: {
     brand: "Bxaut Shovels",
     navMenu: "Menu",
+    navHome: "Home",
+    navMore: "More",
+    navMy: "My",
     navMint: "Mint",
     navMarket: "Black Market",
     navDividend: "Dividends",
@@ -34,6 +37,11 @@ export const translations = {
     rarityNote:
       "Shiny gold is the rarest; 999 fine silver sits in the middle; rusty iron has the largest supply!",
     mintCta: "Mint",
+    mintPrimaryCta: "Mint now",
+    mintMobilePick: "Pick a shovel tier",
+    tierChipIron: "Iron",
+    tierChipSilver: "Silver",
+    tierChipGold: "Gold · rare",
     approveUsdt: "Approve USDT",
     configureContract:
       "Set VITE_SHOVEL_NFT_ADDRESS in your environment to enable minting.",
@@ -140,6 +148,9 @@ export const translations = {
   zh: {
     brand: "Bxaut 首个分红黄金的税务代币",
     navMenu: "菜单",
+    navHome: "首页",
+    navMore: "更多",
+    navMy: "我的",
     navMint: "铸造",
     navMarket: "铲子黑市",
     navDividend: "分红",
@@ -166,6 +177,11 @@ export const translations = {
     rarityNote:
       "闪闪发亮的金铲子最稀缺，999纯银铲子居中，生锈的铁铲发行量最大！",
     mintCta: "铸造",
+    mintPrimaryCta: "立即铸造",
+    mintMobilePick: "选择铲子档位",
+    tierChipIron: "铁铲",
+    tierChipSilver: "银铲",
+    tierChipGold: "金铲 · 稀有",
     approveUsdt: "授权 USDT",
     configureContract: "请在环境变量中设置 VITE_SHOVEL_NFT_ADDRESS 以启用铸造。",
     connectFirst: "请在 BSC 上连接钱包后再铸造。",

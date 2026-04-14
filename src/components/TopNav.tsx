@@ -24,27 +24,83 @@ const keys = {
   community: "navCommunity",
 } as const satisfies Record<(typeof sections)[number], TranslationKey>;
 
+const moreTabs = ["market", "tokenomics", "staking", "governance", "faq"] as const;
+
 function scrollToSection(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
-/** Horizontal strip for small screens; lives in `.bottom-dock`. */
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/** Mobile: 4 primary tabs + “More” sheet (≤720px only). */
 export function BottomTabNav() {
   const { t } = useI18n();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      const el = rootRef.current;
+      if (el && !el.contains(e.target as Node)) setMoreOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [moreOpen]);
+
+  const go = useCallback((id: string) => {
+    scrollToSection(id);
+    setMoreOpen(false);
+  }, []);
 
   return (
-    <nav className="bottom-tab-nav" aria-label="Primary">
-      <div className="bottom-tab-nav__track">
-        {sections.map((id) => (
-          <button
-            key={id}
-            type="button"
-            className="bottom-tab-nav__btn"
-            onClick={() => scrollToSection(id)}
-          >
-            {t(keys[id])}
-          </button>
-        ))}
+    <nav className="bottom-tab-nav" ref={rootRef} aria-label="Primary">
+      {moreOpen && (
+        <div className="bottom-tab-nav__sheet pixel-frame" role="menu">
+          {moreTabs.map((id) => (
+            <button
+              key={id}
+              type="button"
+              role="menuitem"
+              className="bottom-tab-nav__sheet-btn"
+              onClick={() => go(id)}
+            >
+              {t(keys[id])}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="bottom-tab-nav__track bottom-tab-nav__track--main">
+        <button
+          type="button"
+          className="bottom-tab-nav__btn"
+          onClick={() => {
+            setMoreOpen(false);
+            scrollToTop();
+          }}
+        >
+          {t("navHome")}
+        </button>
+        <button type="button" className="bottom-tab-nav__btn" onClick={() => go("mint")}>
+          {t("navMint")}
+        </button>
+        <button type="button" className="bottom-tab-nav__btn" onClick={() => go("dividend")}>
+          {t("navDividend")}
+        </button>
+        <button type="button" className="bottom-tab-nav__btn" onClick={() => go("community")}>
+          {t("navMy")}
+        </button>
+        <button
+          type="button"
+          className="bottom-tab-nav__btn bottom-tab-nav__btn--more"
+          aria-expanded={moreOpen}
+          aria-haspopup="menu"
+          onClick={() => setMoreOpen((v) => !v)}
+        >
+          {t("navMore")}
+        </button>
       </div>
     </nav>
   );
