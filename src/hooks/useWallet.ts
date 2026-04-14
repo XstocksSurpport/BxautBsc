@@ -1,9 +1,16 @@
-import { BrowserProvider, Contract, formatUnits } from "ethers";
+import {
+  BrowserProvider,
+  Contract,
+  formatUnits,
+  getAddress,
+  JsonRpcProvider,
+} from "ethers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ERC20_ABI } from "../config/abis";
 import {
   BSC_CHAIN_ID,
   BSC_NETWORK_PARAMS,
+  BSC_PUBLIC_HTTP_RPC,
   BSC_USDT_ADDRESS,
 } from "../config/constants";
 
@@ -22,6 +29,12 @@ declare global {
 
 function shortenAddress(addr: string) {
   return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
+}
+
+function sleep(ms: number) {
+  return new Promise<void>((r) => {
+    window.setTimeout(r, ms);
+  });
 }
 
 async function ensureBsc(ethereum: NonNullable<Window["ethereum"]>) {
@@ -62,18 +75,19 @@ export function useWallet() {
   const [error, setError] = useState<string | null>(null);
   const autoSwitchConsumed = useRef(false);
 
-  const provider = useMemo(() => {
-    if (!window.ethereum) return null;
-    return new BrowserProvider(window.ethereum);
-  }, []);
+  const bscReadProvider = useMemo(
+    () => new JsonRpcProvider(BSC_PUBLIC_HTTP_RPC, BSC_CHAIN_ID),
+    [],
+  );
 
   const refreshUsdt = useCallback(async () => {
-    if (!provider || !account || chainId !== BSC_CHAIN_ID) {
+    if (!account || chainId !== BSC_CHAIN_ID) {
       setUsdtBalance(null);
       return;
     }
-    const usdt = new Contract(BSC_USDT_ADDRESS, ERC20_ABI, provider);
-    const raw = await usdt.balanceOf(account);
+    const owner = getAddress(account);
+    const usdt = new Contract(BSC_USDT_ADDRESS, ERC20_ABI, bscReadProvider);
+    const raw = await usdt.balanceOf(owner);
     let decimals = 18;
     try {
       decimals = Number(await usdt.decimals());
@@ -81,7 +95,7 @@ export function useWallet() {
       decimals = 18;
     }
     setUsdtBalance(formatUnits(raw, decimals));
-  }, [provider, account, chainId]);
+  }, [bscReadProvider, account, chainId]);
 
   const readChainAndAccount = useCallback(async () => {
     if (!window.ethereum) return;
@@ -196,20 +210,46 @@ export function useWallet() {
     hasInjectedProvider: Boolean(window.ethereum),
     /**
      * Approve exactly `minAmount` for this spend (not unlimited).
+     * Reads `allowance` via public BSC RPC — wallet RPC often fails `eth_call` on mobile (missing revert data).
      * If allowance is non-zero but insufficient, reset to 0 first — required by some USDT-style tokens.
      */
     approveUsdt: async (spender: string, minAmount: bigint) => {
       if (!window.ethereum || !account) throw new Error("Wallet not ready");
+      if (chainId !== BSC_CHAIN_ID) throw new Error("Switch to BNB Smart Chain first");
       const browserProvider = new BrowserProvider(window.ethereum);
       const signer = await browserProvider.getSigner();
-      const usdt = new Contract(BSC_USDT_ADDRESS, ERC20_ABI, signer);
-      const current: bigint = await usdt.allowance(account, spender);
+      const usdtWrite = new Contract(BSC_USDT_ADDRESS, ERC20_ABI, signer);
+      const owner = getAddress(account);
+      const spenderCs = getAddress(spender);
+      const usdtRead = new Contract(BSC_USDT_ADDRESS, ERC20_ABI, bscReadProvider);
+
+      let current = 0n;
+      let lastErr: unknown;
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          current = await usdtRead.allowance(owner, spenderCs);
+          lastErr = undefined;
+          break;
+        } catch (e) {
+          lastErr = e;
+          await sleep(280 * (attempt + 1));
+        }
+      }
+      if (lastErr !== undefined) {
+        try {
+          current = await usdtWrite.allowance(owner, spenderCs);
+        } catch (e2) {
+          const a = e2 instanceof Error ? e2.message : String(e2);
+          const b = lastErr instanceof Error ? lastErr.message : String(lastErr);
+          throw new Error(`USDT allowance check failed: ${a} (public RPC: ${b})`);
+        }
+      }
       if (current >= minAmount) return null;
       if (current > 0n) {
-        const reset = await usdt.approve(spender, 0);
+        const reset = await usdtWrite.approve(spenderCs, 0);
         await reset.wait();
       }
-      const tx = await usdt.approve(spender, minAmount);
+      const tx = await usdtWrite.approve(spenderCs, minAmount);
       return tx;
     },
   };

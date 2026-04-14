@@ -217,6 +217,10 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       setStatus(t("mintStepApprove"));
       const approveTx = await wallet.approveUsdt(addr, price);
       if (approveTx) await approveTx.wait();
+      /* Mobile wallets often drop the second popup if it fires immediately after the first. */
+      await new Promise<void>((r) => {
+        window.setTimeout(r, 520);
+      });
       setStatus(t("mintStepMint"));
       const tx = await nft.mint(tier);
       await tx.wait();

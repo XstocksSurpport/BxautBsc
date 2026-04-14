@@ -84,3 +84,6 @@ export const BSC_NETWORK_PARAMS = {
   rpcUrls: ["https://bsc-dataseed.binance.org/"],
   blockExplorerUrls: ["https://bscscan.com"],
 } as const;
+
+/** Read-only `eth_call` / events — use instead of the wallet RPC (often flaky on mobile in-app browsers). */
+export const BSC_PUBLIC_HTTP_RPC = BSC_NETWORK_PARAMS.rpcUrls[0];
