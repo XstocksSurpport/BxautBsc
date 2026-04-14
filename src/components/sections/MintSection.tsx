@@ -39,12 +39,13 @@ function chainMintPct(minted: number | undefined, max: number) {
   return Math.min(100, Math.round((1000 * minted) / max) / 10);
 }
 
-/** Simulated marketing curve: iron +1%/h, silver +1%/2h, gold +1%/h, capped at 60%. */
+/** Simulated curve: iron +1%/h; silver & gold +1%/2h; capped at 60% (see anchor in constants). */
 function simulatedMintDisplayPct(tier: ShovelTier, nowMs: number) {
   const elapsed = Math.max(0, nowMs - SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS);
   const wholeHours = Math.floor(elapsed / MS_PER_HOUR);
   const base = tier === 0 ? 54 : tier === 1 ? 28 : 11;
-  const increments = tier === 1 ? Math.floor(wholeHours / 2) : wholeHours;
+  const increments =
+    tier === 0 ? wholeHours : Math.floor(wholeHours / 2);
   return Math.min(60, base + increments);
 }
 
