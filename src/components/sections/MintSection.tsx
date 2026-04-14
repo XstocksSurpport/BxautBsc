@@ -1,8 +1,9 @@
 import { BrowserProvider, Contract } from "ethers";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SHOVEL_NFT_ABI } from "../../config/abis";
 import {
   BSC_CHAIN_ID,
+  SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS,
   SHOVEL_TIERS,
   estimatedXautPerMintFromFeeShare,
   tierPriceWei,
@@ -31,9 +32,40 @@ function nftAddress() {
   return displayShovelNftAddress();
 }
 
-function mintPct(minted: number | undefined, max: number) {
+const MS_PER_HOUR = 3_600_000;
+
+function chainMintPct(minted: number | undefined, max: number) {
   if (!max || minted === undefined) return 0;
   return Math.min(100, Math.round((1000 * minted) / max) / 10);
+}
+
+/** Simulated marketing curve: iron +1%/h, silver +1%/2h, gold +1%/h, capped at 60%. */
+function simulatedMintDisplayPct(tier: ShovelTier, nowMs: number) {
+  const elapsed = Math.max(0, nowMs - SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS);
+  const wholeHours = Math.floor(elapsed / MS_PER_HOUR);
+  const base = tier === 0 ? 54 : tier === 1 ? 28 : 11;
+  const increments = tier === 1 ? Math.floor(wholeHours / 2) : wholeHours;
+  return Math.min(60, base + increments);
+}
+
+/** Blends sim (below 60%) with on-chain %; from 60% onward follows real mints. */
+function displayMintProgressPct(
+  tier: ShovelTier,
+  minted: number | undefined,
+  max: number,
+  nowMs: number,
+) {
+  const chain = chainMintPct(minted, max);
+  const sim = simulatedMintDisplayPct(tier, nowMs);
+  let display: number;
+  if (chain >= 60) {
+    display = chain;
+  } else if (sim >= 60) {
+    display = Math.max(60, chain);
+  } else {
+    display = Math.min(60, Math.max(sim, chain));
+  }
+  return Math.min(100, Math.round(display * 10) / 10);
 }
 
 const tierChipKeys = {
@@ -54,6 +86,8 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
   const addr = nftAddress();
   const sectionRef = useRef<HTMLElement>(null);
   const [mintInView, setMintInView] = useState(true);
+  /** Wall-clock tick so the display-only mint meter advances hourly without waiting on RPC. */
+  const [mintMeterTick, setMintMeterTick] = useState(0);
 
   const refreshOnchain = useCallback(async () => {
     if (!addr || !wallet.hasInjectedProvider || !window.ethereum) return;
@@ -102,6 +136,13 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     );
     io.observe(el);
     return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setMintMeterTick((n) => n + 1);
+    }, 60_000);
+    return () => window.clearInterval(id);
   }, []);
 
   /** Poll totals on BSC; faster interval on narrow viewports and while mint is visible. */
@@ -167,6 +208,8 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     pickMax !== undefined &&
     pickMinted >= pickMax;
 
+  const nowMs = useMemo(() => Date.now(), [mintMeterTick]);
+
   return (
     <section
       ref={sectionRef}
@@ -198,7 +241,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
           const max = o?.max !== undefined ? Number(o.max) : meta.supply;
           const soldOut =
             minted !== undefined && max !== undefined && minted >= max;
-          const pct = mintPct(minted, max);
+          const pct = displayMintProgressPct(tier, minted, max, nowMs);
 
           return (
             <article
@@ -234,7 +277,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
                 </div>
                 <div className="mint-meter__track">
                   <div
-                    className={`mint-meter__fill mint-meter__fill--${meta.key}`}
+                    className="mint-meter__fill mint-meter__fill--yellow"
                     style={{ width: `${pct}%` }}
                   />
                 </div>
