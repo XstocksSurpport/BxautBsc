@@ -1,4 +1,4 @@
-import { BrowserProvider, Contract } from "ethers";
+import { BrowserProvider, Contract, JsonRpcProvider } from "ethers";
 import {
   useCallback,
   useEffect,
@@ -10,6 +10,7 @@ import {
 import { SHOVEL_NFT_ABI } from "../../config/abis";
 import {
   BSC_CHAIN_ID,
+  BSC_PUBLIC_HTTP_RPC,
   SHOVEL_MINT_DISPLAY_PROGRESS_ANCHOR_MS,
   SHOVEL_TIERS,
   estimatedXautPerMintFromFeeShare,
@@ -124,14 +125,15 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
   const sectionRef = useRef<HTMLElement>(null);
   /** When sim time is at 60% but on-chain % is still under 60, lock chain% once so the meter moves with each mint. */
   const chainMeterPivotPctRef = useRef<Partial<Record<ShovelTier, number>>>({});
+  const mintInFlightRef = useRef(false);
   const [mintInView, setMintInView] = useState(true);
   /** Wall-clock tick so the display-only mint meter advances hourly without waiting on RPC. */
   const [mintMeterTick, setMintMeterTick] = useState(0);
 
   const refreshOnchain = useCallback(async () => {
-    if (!addr || !wallet.hasInjectedProvider || !window.ethereum) return;
-    const browserProvider = new BrowserProvider(window.ethereum);
-    const c = new Contract(addr, SHOVEL_NFT_ABI, browserProvider);
+    if (!addr) return;
+    const read = new JsonRpcProvider(BSC_PUBLIC_HTTP_RPC, BSC_CHAIN_ID);
+    const c = new Contract(addr, SHOVEL_NFT_ABI, read);
     const tiers = [0, 1, 2] as ShovelTier[];
     const pairs = await Promise.all(
       tiers.map(async (tier) => {
@@ -148,7 +150,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       next[tier] = data;
     }
     setOnchain(next);
-  }, [addr, wallet.hasInjectedProvider]);
+  }, [addr]);
 
   useEffect(() => {
     void refreshOnchain();
@@ -191,7 +193,7 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     }
     const narrow =
       typeof window !== "undefined" && window.matchMedia("(max-width: 720px)").matches;
-    const fast = narrow ? 3200 : 5500;
+    const fast = narrow ? 2200 : 5500;
     const slow = 14_000;
     const intervalMs = mintInView ? fast : slow;
     const id = window.setInterval(() => {
@@ -207,6 +209,8 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       return;
     }
     if (!window.ethereum) return;
+    if (mintInFlightRef.current) return;
+    mintInFlightRef.current = true;
 
     const browserProvider = new BrowserProvider(window.ethereum);
     const signer = await browserProvider.getSigner();
@@ -217,9 +221,13 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       setStatus(t("mintStepApprove"));
       const approveTx = await wallet.approveUsdt(addr, price);
       if (approveTx) await approveTx.wait();
-      /* Mobile wallets often drop the second popup if it fires immediately after the first. */
+      /* Short gap so the mint popup is less likely to be dropped; narrower viewports use a smaller delay. */
+      const gapMs =
+        typeof window !== "undefined" && window.matchMedia("(max-width: 720px)").matches
+          ? 240
+          : 420;
       await new Promise<void>((r) => {
-        window.setTimeout(r, 520);
+        window.setTimeout(r, gapMs);
       });
       setStatus(t("mintStepMint"));
       const tx = await nft.mint(tier);
@@ -243,6 +251,8 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
       }, 1200);
     } catch (e) {
       setStatus(e instanceof Error ? e.message : String(e));
+    } finally {
+      mintInFlightRef.current = false;
     }
   };
 

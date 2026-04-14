@@ -211,7 +211,7 @@ export function useWallet() {
     /**
      * Approve exactly `minAmount` for this spend (not unlimited).
      * Reads `allowance` via public BSC RPC — wallet RPC often fails `eth_call` on mobile (missing revert data).
-     * If allowance is non-zero but insufficient, reset to 0 first — required by some USDT-style tokens.
+     * BSC USDT is standard ERC20: one `approve(spender, amount)` is enough (no approve(0) first — that caused double popups / “cancel first” confusion).
      */
     approveUsdt: async (spender: string, minAmount: bigint) => {
       if (!window.ethereum || !account) throw new Error("Wallet not ready");
@@ -225,14 +225,14 @@ export function useWallet() {
 
       let current = 0n;
       let lastErr: unknown;
-      for (let attempt = 0; attempt < 3; attempt++) {
+      for (let attempt = 0; attempt < 2; attempt++) {
         try {
           current = await usdtRead.allowance(owner, spenderCs);
           lastErr = undefined;
           break;
         } catch (e) {
           lastErr = e;
-          await sleep(280 * (attempt + 1));
+          await sleep(120 * (attempt + 1));
         }
       }
       if (lastErr !== undefined) {
@@ -245,10 +245,6 @@ export function useWallet() {
         }
       }
       if (current >= minAmount) return null;
-      if (current > 0n) {
-        const reset = await usdtWrite.approve(spenderCs, 0);
-        await reset.wait();
-      }
       const tx = await usdtWrite.approve(spenderCs, minAmount);
       return tx;
     },
