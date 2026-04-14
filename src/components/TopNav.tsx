@@ -26,7 +26,7 @@ const keys = {
   community: "navCommunity",
 } as const satisfies Record<(typeof sections)[number], TranslationKey>;
 
-const moreTabs = ["market", "tokenomics", "staking", "governance", "faq"] as const;
+const moreTabs = ["market", "tokenomics", "staking", "governance", "faq", "community"] as const;
 
 function scrollToSection(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -96,7 +96,7 @@ export function BottomTabNav() {
           {t("navDividend")}
         </button>
         <button type="button" className="bottom-tab-nav__btn" onClick={() => go("community")}>
-          {t("navMy")}
+          {t("navCommunity")}
         </button>
         <button
           type="button"

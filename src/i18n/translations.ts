@@ -145,7 +145,7 @@ export const translations = {
     tokS5b:
       "NFTs are on-chain yield nodes; each Shovel is the pass for tax dividends and XAUT upside.",
     mobileHomeLead:
-      "Use the bottom tabs to switch pages—each opens its own panel (swipe-style, no long scroll between sections).",
+      "$BXAUT = a trade-tax token that quietly stacks gold for you, then routes earnings back through NFTs.",
     assetsLabel: "Assets",
     pendingBxautLine: "Pending Bxaut tokens: {count}",
     myNfts: "My NFTs",
@@ -167,7 +167,7 @@ export const translations = {
     navMore: "更多",
     navMy: "我的",
     navMint: "铸造",
-    navMarket: "铲子黑市",
+    navMarket: "黑市",
     navDividend: "分红",
     navTokenomics: "代币经济学",
     navStaking: "质押",
@@ -287,7 +287,8 @@ export const translations = {
     tokS5a: "$BXAUT 是「黄金本位价值放大器」：持续注入 XAUT 流动性，底层价值随生态活跃增强。",
     tokS5b:
       "NFT 是「链上收益捕获节点」：每一枚铲子都是交易税费分红与黄金流动性加持的通行证。",
-    mobileHomeLead: "底部标签切换横向页面，各功能独立一屏，无需在长页里上下找。",
+    mobileHomeLead:
+      '$BXAUT = 一边收交易税，一边偷偷给你买黄金的"打工人代币"，顺便用 NFT 把赚到的钱再分回给你。',
     assetsLabel: "资产",
     pendingBxautLine: "待发放 Bxaut 代币 {count} 枚",
     myNfts: "我的 NFT",
