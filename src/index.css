@@ -2535,17 +2535,27 @@ body {
     font-size: clamp(12px, 3.2vw, 15px);
   }
 
+  /* Show full shovel art: cover + forced aspect was cropping ~2/3 of the sprite */
   .tier-art-wrap {
-    max-height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 132px;
+    max-height: 200px;
     overflow: hidden;
     aspect-ratio: auto;
+    padding: 6px 8px;
+    box-sizing: border-box;
   }
 
   .tier-art {
-    max-height: 220px;
-    width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 176px;
+    aspect-ratio: unset;
+    object-fit: contain;
+    object-position: center;
   }
 
   .tier-card .tier-mint-actions .btn,
@@ -2761,7 +2771,8 @@ body {
 .mobile-home-dance__inner {
   width: min(100%, 300px);
   max-height: min(42vh, 280px);
-  background: #100b1c;
+  /* Normal stacking: multiply blend was crushing luminance on this dark frame */
+  background: #1a1428;
   border-radius: 14px;
   overflow: hidden;
   box-sizing: border-box;
@@ -2774,9 +2785,8 @@ body {
   display: block;
   object-fit: contain;
   vertical-align: top;
-  /* Lighten white studio backgrounds against dark UI (best: export WebM with alpha). */
-  mix-blend-mode: multiply;
-  filter: contrast(1.06) saturate(1.05);
+  mix-blend-mode: normal;
+  filter: brightness(1.12) contrast(1.05) saturate(1.06);
 }
 
 .mobile-page-section {
