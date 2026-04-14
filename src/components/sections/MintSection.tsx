@@ -1,5 +1,5 @@
 import { BrowserProvider, Contract } from "ethers";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SHOVEL_NFT_ABI } from "../../config/abis";
 import {
   BSC_CHAIN_ID,
@@ -51,21 +51,27 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
   >({});
 
   const addr = nftAddress();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [mintInView, setMintInView] = useState(true);
 
   const refreshOnchain = useCallback(async () => {
     if (!addr || !wallet.hasInjectedProvider || !window.ethereum) return;
     const browserProvider = new BrowserProvider(window.ethereum);
     const c = new Contract(addr, SHOVEL_NFT_ABI, browserProvider);
-    const next: Partial<Record<ShovelTier, { minted?: bigint; max?: bigint }>> =
-      {};
-    for (const tier of [0, 1, 2] as ShovelTier[]) {
-      try {
-        const max = await c.maxSupply(tier);
-        const minted = await c.totalMinted(tier);
-        next[tier] = { max, minted };
-      } catch {
-        next[tier] = {};
-      }
+    const tiers = [0, 1, 2] as ShovelTier[];
+    const pairs = await Promise.all(
+      tiers.map(async (tier) => {
+        try {
+          const [max, minted] = await Promise.all([c.maxSupply(tier), c.totalMinted(tier)]);
+          return [tier, { max, minted }] as const;
+        } catch {
+          return [tier, {}] as const;
+        }
+      }),
+    );
+    const next: Partial<Record<ShovelTier, { minted?: bigint; max?: bigint }>> = {};
+    for (const [tier, data] of pairs) {
+      next[tier] = data;
     }
     setOnchain(next);
   }, [addr, wallet.hasInjectedProvider]);
@@ -85,16 +91,33 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     return () => document.removeEventListener("visibilitychange", onVis);
   }, [refreshOnchain, wallet.chainId]);
 
-  /** Poll totals on BSC so progress reflects your mint and others' mints without reload. */
+  /** Throttle RPC when the mint block is off-screen (desktop long page). */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([e]) => setMintInView(Boolean(e?.isIntersecting)),
+      { root: null, threshold: [0, 0.08, 0.25] },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  /** Poll totals on BSC; faster interval on narrow viewports and while mint is visible. */
   useEffect(() => {
     if (!wallet.hasInjectedProvider || wallet.chainId !== BSC_CHAIN_ID || !addr) {
       return;
     }
+    const narrow =
+      typeof window !== "undefined" && window.matchMedia("(max-width: 720px)").matches;
+    const fast = narrow ? 3200 : 5500;
+    const slow = 14_000;
+    const intervalMs = mintInView ? fast : slow;
     const id = window.setInterval(() => {
       void refreshOnchain();
-    }, 12_000);
+    }, intervalMs);
     return () => window.clearInterval(id);
-  }, [wallet.hasInjectedProvider, wallet.chainId, addr, refreshOnchain]);
+  }, [wallet.hasInjectedProvider, wallet.chainId, addr, refreshOnchain, mintInView]);
 
   const mint = async (tier: ShovelTier) => {
     setStatus(null);
@@ -144,7 +167,11 @@ export function MintSection({ wallet }: { wallet: WalletApi }) {
     pickMinted >= pickMax;
 
   return (
-    <section id="mint" className="section mint-section section--meme pixel-frame">
+    <section
+      ref={sectionRef}
+      id="mint"
+      className="section mint-section section--meme pixel-frame"
+    >
       <div className="section-head">
         <h2 className="section-title">{t("mintTitle")}</h2>
         <p className="mint-theme">{t("mintTheme")}</p>

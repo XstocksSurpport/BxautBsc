@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useI18n } from "../i18n/I18nContext";
+import type { MobileTabId } from "../mobile/MobileTabContext";
+import { useMobileTab } from "../mobile/MobileTabContext";
 import type { TranslationKey } from "../i18n/translations";
 
 const sections = [
@@ -37,6 +39,7 @@ function scrollToTop() {
 /** Mobile: 4 primary tabs + “More” sheet (≤720px only). */
 export function BottomTabNav() {
   const { t } = useI18n();
+  const { isPager, setActiveTab } = useMobileTab();
   const [moreOpen, setMoreOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -50,10 +53,20 @@ export function BottomTabNav() {
     return () => document.removeEventListener("mousedown", onDoc);
   }, [moreOpen]);
 
-  const go = useCallback((id: string) => {
-    scrollToSection(id);
+  const go = useCallback(
+    (id: MobileTabId) => {
+      setMoreOpen(false);
+      if (isPager) setActiveTab(id);
+      else scrollToSection(id);
+    },
+    [isPager, setActiveTab],
+  );
+
+  const goHome = useCallback(() => {
     setMoreOpen(false);
-  }, []);
+    if (isPager) setActiveTab("home");
+    else scrollToTop();
+  }, [isPager, setActiveTab]);
 
   return (
     <nav className="bottom-tab-nav" ref={rootRef} aria-label="Primary">
@@ -73,14 +86,7 @@ export function BottomTabNav() {
         </div>
       )}
       <div className="bottom-tab-nav__track bottom-tab-nav__track--main">
-        <button
-          type="button"
-          className="bottom-tab-nav__btn"
-          onClick={() => {
-            setMoreOpen(false);
-            scrollToTop();
-          }}
-        >
+        <button type="button" className="bottom-tab-nav__btn" onClick={goHome}>
           {t("navHome")}
         </button>
         <button type="button" className="bottom-tab-nav__btn" onClick={() => go("mint")}>
@@ -106,15 +112,21 @@ export function BottomTabNav() {
   );
 }
 
-export function TopNav() {
+/** Site section menu (desktop scroll + mobile pager). Lives in the header. */
+export function SectionNavMenu() {
   const { t } = useI18n();
+  const { isPager, setActiveTab } = useMobileTab();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
-  const scrollTo = useCallback((id: string) => {
-    scrollToSection(id);
-    setOpen(false);
-  }, []);
+  const go = useCallback(
+    (id: (typeof sections)[number]) => {
+      setOpen(false);
+      if (isPager) setActiveTab(id);
+      else scrollToSection(id);
+    },
+    [isPager, setActiveTab],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -134,35 +146,29 @@ export function TopNav() {
   }, [open]);
 
   return (
-    <nav className="top-nav top-nav--desktop pixel-frame" aria-label="Primary">
-      <div className="top-nav-dropdown" ref={rootRef}>
-        <button
-          type="button"
-          className="top-nav-trigger"
-          aria-expanded={open}
-          aria-haspopup="listbox"
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="top-nav-trigger-label">{t("navMenu")}</span>
-          <span className={`top-nav-caret${open ? " open" : ""}`} aria-hidden />
-        </button>
-        {open && (
-          <ul className="top-nav-menu pixel-frame" role="listbox">
-            {sections.map((id) => (
-              <li key={id} role="none">
-                <button
-                  type="button"
-                  role="option"
-                  className="top-nav-item"
-                  onClick={() => scrollTo(id)}
-                >
-                  {t(keys[id])}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </nav>
+    <div className="section-nav-dropdown" ref={rootRef}>
+      <button
+        type="button"
+        className="top-nav-trigger section-nav-trigger"
+        aria-expanded={open}
+        aria-haspopup="listbox"
+        aria-label={t("navMenu")}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <span className="top-nav-trigger-label">{t("navMenu")}</span>
+        <span className={`top-nav-caret${open ? " open" : ""}`} aria-hidden />
+      </button>
+      {open && (
+        <ul className="top-nav-menu section-nav-menu-list pixel-frame" role="listbox">
+          {sections.map((id) => (
+            <li key={id} role="none">
+              <button type="button" role="option" className="top-nav-item" onClick={() => go(id)}>
+                {t(keys[id])}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }

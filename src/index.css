@@ -2673,5 +2673,304 @@ body {
   .tokenomics-table td {
     padding: 6px 8px;
   }
+
+  .app-shell.app-shell--mobile-pager {
+    padding-bottom: 0 !important;
+  }
+}
+
+/* —— Mobile horizontal pager (≤720px + JS isPager): tab strip drives translateX —— */
+.app-shell--mobile-pager {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-height: 100dvh;
+  min-height: 100dvh;
+  overflow: hidden;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+}
+
+.app-shell--mobile-pager .mobile-pages-viewport {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  position: relative;
+  z-index: 3;
+  overflow: hidden;
+}
+
+.mobile-pages-rail {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100%;
+  will-change: transform;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mobile-page {
+  box-sizing: border-box;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px 12px calc(102px + env(safe-area-inset-bottom));
+}
+
+.mobile-page--home {
+  text-align: center;
+}
+
+.mobile-home-lead {
+  margin: 10px 0 0;
+  text-align: center;
+}
+
+.mobile-home-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mobile-home-primary {
+  min-height: 52px;
+  border-radius: 12px;
+}
+
+.mobile-home-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 12px;
+}
+
+.mobile-page-section {
+  margin: 0 auto;
+  max-width: 100%;
+}
+
+.mobile-page-section-inner {
+  max-width: min(100%, 760px);
+  margin: 0 auto;
+  padding: 0 0 8px;
+}
+
+/* —— Compact header + assets sub-page —— */
+.app-header--compact {
+  align-items: start;
+}
+
+.brand-center--compact {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  transform: none;
+  text-align: left;
+  justify-self: center;
+  min-width: 0;
+}
+
+.brand-text-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.brand-short {
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: clamp(9px, 1.9vw, 12px);
+  line-height: 1.45;
+  color: var(--gold2);
+  text-shadow:
+    2px 2px 0 #2d1048,
+    3px 3px 0 #000;
+}
+
+.brand-tagline {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  font-size: clamp(10px, 2vw, 12px);
+  line-height: 1.35;
+  font-weight: 600;
+  color: #d6d3d1;
+  max-width: min(52vw, 400px);
+}
+
+.wallet-cluster--compact {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+}
+
+.header-assets-btn {
+  flex-shrink: 0;
+}
+
+.section-nav-dropdown {
+  position: relative;
+  z-index: 55;
+  flex-shrink: 0;
+  width: auto;
+  min-width: 0;
+  max-width: 160px;
+}
+
+.section-nav-dropdown .top-nav-trigger {
+  padding: 8px 10px;
+  font-size: 8px;
+  min-height: 36px;
+}
+
+.section-nav-dropdown .top-nav-menu {
+  left: auto;
+  right: 0;
+  min-width: min(280px, calc(100vw - 24px));
+}
+
+.app-shell--assets-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+}
+
+.app-shell--assets-page .bottom-dock {
+  display: none !important;
+}
+
+.assets-sub-page-host {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+}
+
+.assets-sub-page {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 720px;
+  padding: 12px 14px 20px;
+  box-sizing: border-box;
+}
+
+.assets-sub-page__toolbar {
+  margin-bottom: 12px;
+}
+
+.assets-sub-page__back {
+  width: 100%;
+  min-height: 48px;
+}
+
+.assets-sub-page__hint {
+  margin: 12px 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #d6d3d1;
+}
+
+.assets-sub-page__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.assets-sub-page__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.assets-sub-page__addr {
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.assets-sub-page__disconnect {
+  flex-shrink: 0;
+}
+
+.assets-sub-page__label {
+  display: block;
+  margin: 4px 0 6px;
+}
+
+.assets-sub-page__pill {
+  display: inline-flex;
+  margin-bottom: 8px;
+}
+
+.assets-sub-page__pending {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.assets-sub-page__nfts {
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 2px solid rgba(201, 162, 39, 0.25);
+}
+
+.assets-sub-page__nfts-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.assets-sub-page__nfts-title {
+  margin: 0;
+  font-family: "Press Start 2P", monospace;
+  font-size: 10px;
+  color: var(--gold2);
+}
+
+.assets-sub-page__refresh {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: 8px;
+}
+
+@media (max-width: 720px) {
+  .brand-tagline {
+    max-width: 100%;
+    font-size: clamp(9px, 2.4vw, 11px);
+  }
+
+  .brand-short {
+    font-size: clamp(8px, 2.6vw, 10px);
+  }
+
+  .app-header--compact .wallet-cluster--compact {
+    max-width: 100%;
+  }
 }
 

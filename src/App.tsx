@@ -1,19 +1,27 @@
 import { Header } from "./components/Header";
 import { PromoRollVideo } from "./components/PromoRollVideo";
-import { BottomTabNav, TopNav } from "./components/TopNav";
+import { BottomTabNav } from "./components/TopNav";
+import { AssetsSubPage } from "./components/AssetsSubPage";
+import { AssetsPageProvider, useAssetsPage } from "./context/AssetsPageContext";
 import { CommunitySection } from "./components/sections/CommunitySection";
 import { DividendSection } from "./components/sections/DividendSection";
 import { MarketplaceSection } from "./components/sections/MarketplaceSection";
 import { MintSection } from "./components/sections/MintSection";
 import { useWallet } from "./hooks/useWallet";
 import { I18nProvider, useI18n } from "./i18n/I18nContext";
+import { MobileMain } from "./mobile/MobileMain";
+import { MobileTabProvider, useMobileTab } from "./mobile/MobileTabContext";
 
 function Shell() {
   const wallet = useWallet();
   const { t } = useI18n();
+  const { isPager } = useMobileTab();
+  const { open: assetsOpen, closeAssets } = useAssetsPage();
 
   return (
-    <div className="app-shell">
+    <div
+      className={`app-shell${isPager ? " app-shell--mobile-pager" : ""}${assetsOpen ? " app-shell--assets-page" : ""}`}
+    >
       <div className="meme-chaos" aria-hidden>
         <span className="meme-float meme-float--a">☽</span>
         <span className="meme-float meme-float--b">✦</span>
@@ -25,13 +33,20 @@ function Shell() {
       <PromoRollVideo />
       <Header wallet={wallet} />
       {wallet.error && <div className="banner-error">{wallet.error}</div>}
-      <TopNav />
-      <main className="main-flow">
-        <MintSection wallet={wallet} />
-        <MarketplaceSection />
-        <DividendSection wallet={wallet} />
-        <CommunitySection />
-      </main>
+      {assetsOpen ? (
+        <div className="assets-sub-page-host">
+          <AssetsSubPage wallet={wallet} onBack={closeAssets} />
+        </div>
+      ) : isPager ? (
+        <MobileMain wallet={wallet} />
+      ) : (
+        <main className="main-flow">
+          <MintSection wallet={wallet} />
+          <MarketplaceSection />
+          <DividendSection wallet={wallet} />
+          <CommunitySection />
+        </main>
+      )}
       <div className="bottom-dock pixel-frame">
         <BottomTabNav />
         <footer className="site-credit">
@@ -45,7 +60,11 @@ function Shell() {
 export default function App() {
   return (
     <I18nProvider>
-      <Shell />
+      <MobileTabProvider>
+        <AssetsPageProvider>
+          <Shell />
+        </AssetsPageProvider>
+      </MobileTabProvider>
     </I18nProvider>
   );
 }

@@ -5,6 +5,13 @@ export type Locale = "en" | "zh";
 export const translations = {
   en: {
     brand: "Bxaut Shovels",
+    brandShort: "Bxaut",
+    headerTagline:
+      "Gold-linked dividends through NFT shovels — the ecosystem tax token.",
+    backToHome: "Back to home",
+    assetsConnectHint: "Connect your wallet on BSC to view balances and NFTs.",
+    assetsWrongNetworkHint: "Switch to BNB Smart Chain to load your assets.",
+    assetsRefreshNfts: "Refresh NFTs",
     navMenu: "Menu",
     navHome: "Home",
     navMore: "More",
@@ -137,6 +144,8 @@ export const translations = {
       "$BXAUT is a gold-anchored amplifier: XAUT liquidity grows with ecosystem activity.",
     tokS5b:
       "NFTs are on-chain yield nodes; each Shovel is the pass for tax dividends and XAUT upside.",
+    mobileHomeLead:
+      "Use the bottom tabs to switch pages—each opens its own panel (swipe-style, no long scroll between sections).",
     assetsLabel: "Assets",
     pendingBxautLine: "Pending Bxaut tokens: {count}",
     myNfts: "My NFTs",
@@ -147,6 +156,12 @@ export const translations = {
   },
   zh: {
     brand: "Bxaut 首个分红黄金的税务代币",
+    brandShort: "Bxaut",
+    headerTagline: "Bxaut 首个分红黄金的税务代币",
+    backToHome: "返回主页",
+    assetsConnectHint: "在 BSC 上连接钱包后即可查看余额与 NFT。",
+    assetsWrongNetworkHint: "请切换到 BNB 智能链以加载资产。",
+    assetsRefreshNfts: "刷新 NFT",
     navMenu: "菜单",
     navHome: "首页",
     navMore: "更多",
@@ -272,6 +287,7 @@ export const translations = {
     tokS5a: "$BXAUT 是「黄金本位价值放大器」：持续注入 XAUT 流动性，底层价值随生态活跃增强。",
     tokS5b:
       "NFT 是「链上收益捕获节点」：每一枚铲子都是交易税费分红与黄金流动性加持的通行证。",
+    mobileHomeLead: "底部标签切换横向页面，各功能独立一屏，无需在长页里上下找。",
     assetsLabel: "资产",
     pendingBxautLine: "待发放 Bxaut 代币 {count} 枚",
     myNfts: "我的 NFT",
