@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_TWITTER_URL?: string;
   readonly VITE_DISCORD_URL?: string;
   readonly VITE_PROMO_VIDEO_SRC?: string;
+  /** Optional URL or `public/` path for mobile home loop (self-hosted; no YouTube). */
+  readonly VITE_HOME_DANCE_VIDEO_SRC?: string;
 }
 
 interface ImportMeta {

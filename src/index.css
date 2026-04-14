@@ -2748,6 +2748,37 @@ body {
   font-size: 12px;
 }
 
+/* Home dance loop: self-hosted <video>, max height so it stays on screen */
+.mobile-home-dance {
+  margin-top: 14px;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mobile-home-dance__inner {
+  width: min(100%, 300px);
+  max-height: min(42vh, 280px);
+  background: #100b1c;
+  border-radius: 14px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.mobile-home-dance__video {
+  width: 100%;
+  height: auto;
+  max-height: min(42vh, 280px);
+  display: block;
+  object-fit: contain;
+  vertical-align: top;
+  /* Lighten white studio backgrounds against dark UI (best: export WebM with alpha). */
+  mix-blend-mode: multiply;
+  filter: contrast(1.06) saturate(1.05);
+}
+
 .mobile-page-section {
   margin: 0 auto;
   max-width: 100%;

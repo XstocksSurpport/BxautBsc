@@ -1,5 +1,6 @@
 import type { WalletApi } from "../hooks/useWallet";
 import { useI18n } from "../i18n/I18nContext";
+import { MobileHomeDanceVideo } from "./MobileHomeDanceVideo";
 import { useMobileTab } from "./MobileTabContext";
 
 export function MobileHomePage({ wallet }: { wallet: WalletApi }) {
@@ -22,6 +23,7 @@ export function MobileHomePage({ wallet }: { wallet: WalletApi }) {
           <p className="mobile-home-hint muted">{t("connectFirst")}</p>
         ) : null}
       </div>
+      <MobileHomeDanceVideo />
     </div>
   );
 }
